@@ -6,6 +6,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-landing: var(--landing);
+  --color-landing-card: var(--landing-card);
+  --color-landing-line: var(--landing-line);
+  --color-twin: var(--twin);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-plex-mono);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -64,6 +68,10 @@
   --separator-border: oklch(1 0 0 / 10%);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.6562 0.1826 262.74);
+  --landing: oklch(0.187 0.016 264);
+  --landing-card: oklch(0.225 0.014 264);
+  --landing-line: oklch(0.3 0.016 264);
+  --twin: oklch(0.856 0.155 68);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -133,6 +141,12 @@
 @theme inline {
   --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1
     var(--delay, 0ms);
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-caret: caret 1.1s steps(1, jump-none) infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-aurora: aurora 16s ease-in-out infinite;
+  --animate-twinkle: twinkle 3.6s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.4s linear infinite;
 
   @keyframes cell-ripple {
     0% {
@@ -145,6 +159,70 @@
       opacity: 0.4;
     }
   }
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes caret {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes aurora {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    33% {
+      transform: translate3d(4%, -3%, 0) scale(1.06);
+    }
+    66% {
+      transform: translate3d(-3%, 2%, 0) scale(0.97);
+    }
+  }
+
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.9);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.18);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+}
+
+@utility landing-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
 
 ::-webkit-scrollbar {
