@@ -20,6 +20,11 @@ export async function POST() {
   const response = await generateText({
     model: anthropic("anthropic/claude-opus-4.8"),
     prompt: "Write a vegetarian lasagna recipe for 4 people.",
+    experimental_telemetry: {
+      isEnabled: true,
+      recordInputs: true,
+      recordOutputs: true,
+    },
   })
 
   console.log(response)

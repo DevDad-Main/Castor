@@ -44,12 +44,27 @@ export const demoGenerate = inngest.createFunction(
       return await generateText({
         model: anthropic("anthropic/claude-opus-4.8"),
         prompt: finalPrompt,
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
       })
       // GEMINI
       // return await generateText({
       //   model: google("gemini-3.6-flash"),
       //   prompt: "Write a vegetarian lasagna recipe for 4 people.",
       // })
+    })
+  }
+)
+
+export const demoError = inngest.createFunction(
+  { id: "demo-error" },
+  { event: "demo/error" },
+  async ({ step }) => {
+    await step.run("fail", async () => {
+      throw new Error("Inngest Error: Background job failed!")
     })
   }
 )
