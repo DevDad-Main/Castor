@@ -2,8 +2,6 @@
 
 import {
   ClerkProvider,
-  SignInButton,
-  SignUpButton,
   useAuth,
   UserButton,
 } from "@clerk/nextjs"
@@ -31,7 +29,11 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
           disableTransitionOnChange
         >
           <Authenticated>
-            <UserButton />
+            <div className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-end p-4 md:p-6">
+              <div className="pointer-events-auto">
+                <UserButton />
+              </div>
+            </div>
             {children}
           </Authenticated>
           <Unauthenticated>
