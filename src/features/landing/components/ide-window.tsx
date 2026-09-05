@@ -2,22 +2,17 @@
 
 import { cn } from "cn"
 import { CheckIcon, LoaderCircleIcon } from "lucide-react"
-import { castor } from "../lib/vocab"
-import {
-  frac,
-  inWindow,
-  useProgressive,
-} from "../lib/hooks"
-import { CastorGlyph } from "./brand"
+import { castor, SESSION } from "../lib/vocab"
+import { frac, inWindow, useProgressive } from "../lib/hooks"
 
 type Tok = { t: string; c: string }
 
 const CODE: Tok[][] = [
   [
     { t: "import ", c: "text-violet-300" },
-    { t: "{ useAgent }", c: "text-sky-300" },
+    { t: "{ useSync }", c: "text-sky-300" },
     { t: " from ", c: "text-violet-300" },
-    { t: '"@castor/ai"', c: "text-emerald-300" },
+    { t: '"@castor/session"', c: "text-emerald-300" },
     { t: ";", c: "text-zinc-500" },
   ],
   [],
@@ -51,7 +46,7 @@ const CODE: Tok[][] = [
   ],
   [
     { t: "      ", c: "text-zinc-500" },
-    { t: "{/* ai: confirm before ship */}", c: "text-emerald-300/50 italic" },
+    { t: "{/* session · 2 carets live */}", c: "text-emerald-300/50 italic" },
   ],
   [
     { t: "    </main>", c: "text-sky-300" },
@@ -64,33 +59,31 @@ const CODE: Tok[][] = [
   ],
 ]
 
-const AGENT_EDIT: Tok[] = [
-  { t: "      ", c: "text-zinc-500" },
-  { t: "<ConfirmationDialog ", c: "text-sky-300" },
-  { t: 'tone="soft"', c: "text-amber-300" },
-  { t: " ", c: "text-zinc-500" },
-  { t: "/>", c: "text-zinc-500" },
-]
+const LINE_AT = CODE.map((_, i) => 0.045 + i * 0.04)
 
-const LINE_AT = CODE.map((_, i) => 0.045 + i * 0.042)
+const POLLUX_LINE = 6
+const POLLUX_WINDOW: [number, number] = [0.62, 0.96]
 
 const EditorLine = ({
   toks,
   visible,
-  agent,
   showCaret,
   caretClass,
+  pollux,
 }: {
   toks: Tok[]
   visible: boolean
-  agent?: boolean
   showCaret?: boolean
   caretClass?: string
+  pollux?: boolean
 }) => {
   return (
     <div className="relative transition-opacity duration-300">
       <span
-        className={cn("transition-all duration-300", visible ? "translate-x-0 opacity-100" : "translate-x-3 opacity-0")}
+        className={cn(
+          "transition-all duration-300",
+          visible ? "translate-x-0 opacity-100" : "translate-x-3 opacity-0"
+        )}
       >
         {toks.map((tok, i) => (
           <span key={i} className={tok.c}>
@@ -106,21 +99,14 @@ const EditorLine = ({
           )}
         />
       )}
-      {agent && (
-        <span
-          className={cn(
-            "animate-caret -mb-[0.18em] ml-1 inline-block h-[1.05em] w-[2px] translate-y-[3px]",
-            "bg-twin"
-          )}
-        />
+      {pollux && visible && (
+        <span className="animate-caret -mb-[0.18em] ml-px inline-block h-[1.05em] w-[2px] translate-y-[2px] bg-twin align-baseline" />
       )}
     </div>
   )
 }
 
-const Prompt = () => (
-  <span className="font-bold text-cyan-300">$ </span>
-)
+const Prompt = () => <span className="font-bold text-cyan-300">$ </span>
 
 const t = (s: string, n: number) => s.slice(0, n)
 
@@ -130,10 +116,10 @@ export const IdeWindow = () => {
   const p = useProgressive(10000)
 
   const cmd1 = "npm run dev"
-  const cmd2 = 'castor ask "soften the border"'
+  const cmd2 = "castor session --team"
   const typing1 = t(cmd1, Math.floor(cmd1.length * frac(p, 0.58, 0.66)))
   const typing2 = t(cmd2, Math.floor(cmd2.length * frac(p, 0.76, 0.88)))
-  const agentActive = inWindow(p, 0.7, 0.86)
+  const polluxActive = inWindow(p, POLLUX_WINDOW[0], POLLUX_WINDOW[1])
 
   const lastVisible = (() => {
     let idx = -1
@@ -158,11 +144,16 @@ export const IdeWindow = () => {
             <span className="size-3 rounded-full bg-zinc-600/70" />
           </div>
           <div className="font-mono text-[11px] tracking-wide text-zinc-400">
-            castor — space-station/orbit.tsx
+            castor — {SESSION.workspace}/{SESSION.file}
           </div>
-          <div className="ml-auto hidden items-center gap-1.5 rounded-md border border-landing-line bg-landing-card/70 px-2 py-1 font-mono text-[10px] text-zinc-300 sm:flex">
-            <span className="size-1.5 rounded-full bg-emerald-400" />
-            opus
+          <div className="ml-auto hidden items-center gap-2 rounded-md border border-landing-line bg-landing-card/70 px-2 py-1 font-mono text-[10px] text-zinc-300 sm:flex">
+            {SESSION.crew.map((m) => (
+              <span
+                key={m.name}
+                className={cn("size-2 rounded-full", m.color)}
+              />
+            ))}
+            {SESSION.crew.length} online
           </div>
         </div>
 
@@ -187,51 +178,32 @@ export const IdeWindow = () => {
             <div className="bg-[linear-gradient(180deg,oklch(0.17_0.014_264),oklch(0.145_0.012_264))] px-2 py-3 pr-4 font-mono text-[13px] leading-6">
               {CODE.map((line, i) => {
                 const visible = p >= LINE_AT[i]
-                const isAgentLine = i === 8
-                const editing = agentActive && isAgentLine
                 return (
-                  <div
-                    key={i}
-                    className={cn(
-                      "flex gap-3 py-[1px]",
-                      editing && "rounded bg-twin/10",
-                    )}
-                  >
+                  <div key={i} className="flex gap-3 py-[1px]">
                     <div className="w-8 shrink-0 text-right text-[11px] leading-6 text-zinc-600 select-none">
                       {i + 1}
                     </div>
                     <div className="relative flex-1 whitespace-nowrap">
                       <EditorLine
-                        toks={editing ? AGENT_EDIT : line}
+                        toks={line}
                         visible={visible}
-                        showCaret={
-                          visible && i === lastVisible && !agentActive
-                        }
+                        showCaret={visible && i === lastVisible && !polluxActive}
                         caretClass={
                           proximity(p, LINE_AT[i]) < 0.03
                             ? "bg-sky-300"
                             : "bg-zinc-300"
                         }
+                        pollux={polluxActive && i === POLLUX_LINE}
                       />
-                      {editing && (
-                        <span
-                          className="absolute left-[-6px] top-1/2 -translate-y-1/2 font-mono text-[11px] font-bold text-emerald-400"
-                          aria-hidden
-                        >
-                          +
-                        </span>
-                      )}
-                    </div>
-                    {editing && (
-                      <div className="animate-float -translate-y-1">
-                        <div className="flex items-center gap-1 rounded-md bg-twin/15 px-1.5 py-0.5 ring-1 ring-twin/40">
-                          <CastorGlyph className="size-3.5" />
-                          <span className="font-mono text-[10px] font-medium text-twin">
-                            opus
+                      {polluxActive && i === POLLUX_LINE && (
+                        <div className="animate-float absolute -top-4 right-1">
+                          <span className="flex items-center gap-1 rounded-md bg-twin/15 px-1.5 py-0.5 font-mono text-[10px] font-medium text-twin ring-1 ring-twin/40">
+                            <span className="size-1.5 rounded-full bg-twin" />
+                            pollux
                           </span>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 )
               })}
@@ -239,7 +211,7 @@ export const IdeWindow = () => {
 
             <div className="flex items-center justify-between border-t border-landing-line px-3 py-1.5 font-mono text-[10px] text-zinc-500">
               <span>✓ formatting · ✓ lint</span>
-              <span>Ln 12 · Col 1</span>
+              <span>sync 12ms · Ln 12</span>
             </div>
           </div>
 
@@ -249,14 +221,14 @@ export const IdeWindow = () => {
                 <span
                   className={cn(
                     "rounded-md bg-landing-card/80 px-2.5 py-1 font-mono text-[10px] text-zinc-400 transition-colors",
-                    inWindow(p, 0.02, 1) && "text-zinc-200",
+                    inWindow(p, 0.02, 1) && "text-zinc-200"
                   )}
                 >
                   preview
                 </span>
                 <div className="ml-auto flex items-center gap-1 rounded-md border border-landing-line px-2 py-1 font-mono text-[10px] text-zinc-500">
                   <span className="size-1.5 rounded-full bg-emerald-400" />
-                  localhost:5173/preview
+                  shared /preview
                 </div>
               </div>
 
@@ -272,16 +244,15 @@ export const IdeWindow = () => {
                   className="w-full max-w-[230px] rounded-xl border border-landing-line bg-landing-card p-4 shadow-2xl"
                 >
                   <div className="flex items-center gap-2">
-                    <CastorGlyph className="size-5" />
                     <span className="font-mono text-[10px] text-zinc-500">
-                      space-station
+                      {SESSION.workspace}
                     </span>
                   </div>
                   <p className="mt-3 text-[15px] font-semibold tracking-tight">
                     One codebase.
                   </p>
                   <p className="mt-0.5 text-xs text-zinc-500">
-                    borders: softened ✓
+                    live for the whole crew
                   </p>
                   <div className="mt-4 flex items-center gap-2">
                     <span className="rounded-md bg-primary px-2.5 py-1 text-[10px] font-semibold text-primary-foreground">
@@ -303,9 +274,9 @@ export const IdeWindow = () => {
                   }}
                   className="animate-float absolute right-3 bottom-3 flex items-center gap-1.5 rounded-lg border border-landing-line bg-landing-card px-2.5 py-1.5 shadow-xl"
                 >
-                  <CastorGlyph className="size-3.5" />
+                  <span className="size-1.5 rounded-full bg-twin" />
                   <span className="font-mono text-[10px] text-zinc-300">
-                    opus · live
+                    pollux joined the session
                   </span>
                   <CheckIcon className="size-3 text-emerald-400" />
                 </div>
@@ -333,7 +304,7 @@ export const IdeWindow = () => {
                   <span className="text-emerald-400">✓</span> dev server → :5173
                 </div>
                 <div style={{ opacity: inWindow(p, 0.7, 1) ? 1 : 0, transition: "opacity 400ms ease" }}>
-                  <span className="text-emerald-400">✓</span> preview synced
+                  <span className="text-emerald-400">✓</span> preview shared
                 </div>
                 <div
                   style={{
@@ -352,16 +323,16 @@ export const IdeWindow = () => {
                 >
                   <span className="text-amber-300">⟳</span>{" "}
                   <span className="text-zinc-400">
-                    agent (opus) patched preview.jsx
+                    pollux joined on layer 02
                   </span>
                 </div>
                 <div
                   style={{
-                    opacity: inWindow(p, 0.95, 1) ? 1 : 0,
+                    opacity: inWindow(p, 0.96, 1) ? 1 : 0,
                     transition: "opacity 400ms ease",
                   }}
                 >
-                  <span className="text-emerald-400">✓</span> applied live
+                  <span className="text-emerald-400">✓</span> session synced — 3 online
                 </div>
               </div>
             </div>

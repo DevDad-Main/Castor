@@ -12,23 +12,23 @@ import { CastorGlyph, CastorLogo } from "./brand"
 const FAQS = [
   {
     q: "Where does my code actually run?",
-    a: "In the cloud, streamed to your browser. The editor, terminal and preview all talk to the same live workspace, so you never install a thing — and your repo keeps its git remote.",
+    a: "In the cloud, streamed to your browser. The editor, terminal and preview all talk to the same live workspace — shared with your whole team — and your repo keeps its git remote.",
   },
   {
-    q: "Which models power the agent?",
-    a: "Anthropic Claude today — Opus for the heavy reasoning, Sonnet for daily work, Haiku for the fast stuff. More model docks open over time; the picker is already designed for it.",
+    q: "How do I get my team into the same editor?",
+    a: "Workspaces. They're Clerk-managed and invite-only: send a link and a teammate lands in the live session — carets, cursor and comment threads included. No install for them either.",
   },
   {
-    q: "Can I import my existing repo?",
-    a: "Yes. Connect a GitHub repository and it lands in your workspace with an agent that has already read it — history, structure and all.",
+    q: "What's a multilayer session?",
+    a: "One file, every teammate in their own live viewport. Scroll free, snap to a caret, or follow someone's screen — edits merge on the fly, so there's one truth and no merge anxiety.",
   },
   {
-    q: "Can two people code at once?",
-    a: "Not yet — that's the whole point of the name. Workspaces for teammates are coming, so a friend can drop into your preview, leave a caret and take a seat.",
+    q: "Where does AI fit in?",
+    a: "AI is a teammate you ask. It writes code, makes amendments and runs tests in your branch — like a pair-programmer who never sleeps — while you keep the wheel.",
   },
   {
     q: "Is the preview really live?",
-    a: "Yes. Every file you touch re-renders in the in-browser preview, and the agent's edits show up there too — one screen, zero guesses about what shipped.",
+    a: "Yes, for everyone. Files re-render in the shared in-browser preview the moment anyone touches them — one screen, zero guesses about what shipped.",
   },
 ]
 
@@ -137,8 +137,8 @@ const Cta = () => {
             </span>
           </h2>
           <p className="mt-5 max-w-md text-sm leading-relaxed text-zinc-400 sm:text-base">
-            One workspace, an agent that already read your code, and a preview
-            that shows the truth. Your second mind is a keystroke away.
+            One workspace, every caret. Invite the crew, share the preview and
+            let the session do the sync — AI is on call, between the lines.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <SignUpButton>
@@ -162,7 +162,7 @@ const Footer = () => {
   const columns = [
     {
       title: "product",
-      links: ["workflow", "preview", "command bar", "workspaces (soon)"],
+      links: ["sessions", "live preview", "multilayer", "workspaces"],
     },
     {
       title: "company",
@@ -170,7 +170,7 @@ const Footer = () => {
     },
     {
       title: "stack",
-      links: ["convex", "clerk", "anthropic claude", "next.js"],
+      links: ["next.js", "convex", "clerk workspaces", "liveblocks"],
     },
   ]
 
@@ -180,8 +180,8 @@ const Footer = () => {
         <div>
           <CastorLogo />
           <p className="mt-4 max-w-[240px] text-sm leading-relaxed text-zinc-500">
-The AI cloud IDE named for Gemini&apos;s brightest star. Designed for
-two — you and the agent, you and a teammate.
+            The multiplayer cloud IDE named for Gemini&apos;s brightest star.
+            Clerk workspaces, Liveblocks sync, AI on call.
           </p>
         </div>
         {columns.map((col) => (

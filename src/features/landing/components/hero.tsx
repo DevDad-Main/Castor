@@ -9,7 +9,7 @@ import { CastorLogo } from "./brand"
 import { IdeWindow } from "./ide-window"
 import { Reveal } from "../lib/hooks"
 import { display } from "../lib/fonts"
-import { TICKER_ITEMS } from "../lib/vocab"
+import { TICKER_ITEMS, SESSION } from "../lib/vocab"
 
 const NAV_LINKS = [
   { href: "#workflow", label: "_workflow" },
@@ -61,8 +61,7 @@ export const Navbar = () => {
             </Button>
           </SignInButton>
           <SignUpButton>
-            <Button size="sm" className="gap-1.5">
-              <SparkleIcon className="size-3.5" />
+            <Button size="sm" className="font-mono text-xs">
               get started
             </Button>
           </SignUpButton>
@@ -72,21 +71,28 @@ export const Navbar = () => {
   )
 }
 
-const ModelChips = () => (
-  <div className="flex flex-wrap items-center gap-2 font-mono text-[11px]">
-    {["opus", "sonnet", "haiku"].map((m) => (
-      <span
-        key={m}
-        className="flex items-center gap-1.5 rounded-md border border-landing-line bg-landing-card/60 px-2.5 py-1 text-zinc-300"
-      >
-        <span className="size-1.5 rounded-full bg-ring" />
-        {m}
-      </span>
-    ))}
-    <span className="relative flex items-center gap-1.5 overflow-hidden rounded-md border border-dashed border-landing-line px-2.5 py-1 text-zinc-500">
-      more soon
-      <span className="absolute inset-0 bg-[linear-gradient(110deg,transparent_40%,oklch(0.72_0.16_262/0.25)_50%,transparent_60%)] bg-[length:200%_100%] animate-shimmer" />
-      <span className="size-1.5 rounded-full bg-twin" />
+export const PresenceRow = ({
+  className,
+}: {
+  className?: string
+}) => (
+  <div className={cn("flex flex-wrap items-center gap-3", className)}>
+    <div className="flex -space-x-2">
+      {SESSION.crew.map((m) => (
+        <span
+          key={m.name}
+          title={m.name}
+          className={cn(
+            "grid size-7 place-items-center rounded-full text-[10px] font-medium text-landing ring-2 ring-landing",
+            m.color
+          )}
+        >
+          {m.initial}
+        </span>
+      ))}
+    </div>
+    <span className="font-mono text-[11px] text-zinc-500">
+      {SESSION.crew.length} in this session · typing in {SESSION.file}
     </span>
   </div>
 )
@@ -98,11 +104,8 @@ export const Hero = () => {
         <div>
           <Reveal>
             <div className="flex w-fit items-center gap-2 rounded-full border border-landing-line bg-landing-card/60 px-3 py-1.5 font-mono text-[11px] text-zinc-400">
-              <span className="relative flex size-1.5">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-                <span className="relative inline-flex size-1.5 rounded-full bg-emerald-400" />
-              </span>
-              online — agents docked on three models
+              <span className="size-1.5 rounded-full bg-emerald-400" />
+              shared sessions · live now
             </div>
           </Reveal>
 
@@ -124,10 +127,10 @@ export const Hero = () => {
 
           <Reveal delay={140}>
             <p className="mt-5 max-w-md text-base leading-relaxed text-zinc-400">
-              Castor is a cloud IDE with an AI agent docked in your editor,
-              terminal and preview. Plan in chat, code in the browser, watch it
-              render live — and bring a teammate on later. No install, no setup,
-              just one tab.
+              Castor is a cloud IDE where your team codes in one live
+              session — cursors, carets, previews and comments move for
+              everyone at once. AI edits alongside when you ask. No install,
+              no setup, just one tab.
             </p>
           </Reveal>
 
@@ -148,9 +151,7 @@ export const Hero = () => {
           </Reveal>
 
           <Reveal delay={260}>
-            <div className="mt-8">
-              <ModelChips />
-            </div>
+            <PresenceRow className="mt-8" />
           </Reveal>
         </div>
 
@@ -171,14 +172,14 @@ export const Ticker = () => {
           className="flex shrink-0 items-center gap-10 font-mono text-xs whitespace-nowrap text-zinc-500"
         >
           {item}
-          <SparkleIcon className="size-3 text-twin/70" />
+          <SparkleIcon className="size-3 text-twin/60" />
         </span>
       ))}
     </div>
   )
 
   return (
-    <div className="relative overflow-hidden border-y border-landing-line bg-landing-card/40 py-3">
+    <div className="relative overflow-hidden border-y border-landing-line bg-landing-card/30 py-3">
       <div className="animate-marquee flex w-max">
         {row}
         <div aria-hidden className="flex shrink-0 items-center gap-10 pl-10">
@@ -188,7 +189,7 @@ export const Ticker = () => {
               className="flex shrink-0 items-center gap-10 font-mono text-xs whitespace-nowrap text-zinc-500"
             >
               {item}
-              <SparkleIcon className="size-3 text-twin/70" />
+              <SparkleIcon className="size-3 text-twin/60" />
             </span>
           ))}
         </div>

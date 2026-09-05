@@ -1,18 +1,17 @@
 "use client"
 
-import { useState, type ReactNode } from "react"
+import type { ReactNode } from "react"
 import { cn } from "cn"
 import {
-  CommandIcon,
+  CheckIcon,
+  GitMergeIcon,
+  GlobeIcon,
+  LayersIcon,
   MousePointer2Icon,
-  PhoneIcon,
-  SparkleIcon,
 } from "lucide-react"
-import { Kbd } from "@/components/ui/kbd"
 import { Reveal, Spotlight } from "../lib/hooks"
 import { display } from "../lib/fonts"
-import { CastorGlyph } from "./brand"
-import { MODELS } from "../lib/vocab"
+import { SESSION } from "../lib/vocab"
 
 const SectionHead = ({
   eyebrow,
@@ -45,22 +44,34 @@ const SectionHead = ({
   </Reveal>
 )
 
+const IconChip = ({ children }: { children: ReactNode }) => (
+  <span className="grid size-8 place-items-center rounded-lg border border-landing-line bg-landing-card/70 text-twin">
+    {children}
+  </span>
+)
+
+const Chip = ({ label }: { label: string }) => (
+  <span className="font-mono text-[10px] tracking-[0.2em] text-zinc-500 uppercase">
+    {label}
+  </span>
+)
+
 export const Workflow = () => {
   const steps = [
     {
       n: "01",
-      label: "chat",
-      line: "Tell the agent what you want — it reads the codebase first.",
+      label: "open",
+      line: "Spin a workspace from any repo in one click. No local setup, no flashing terminal.",
     },
     {
       n: "02",
-      label: "code",
-      line: "It edits in your branch. You keep the wheel.",
+      label: "invite",
+      line: "Send the link. Teammates drop straight into the live editor — carets, cursors and all.",
     },
     {
       n: "03",
-      label: "preview",
-      line: "Watch it render live, then ship when it's green.",
+      label: "run",
+      line: "Preview, terminal and comments sync for everyone, so decisions happen where the code lives.",
     },
   ]
 
@@ -71,7 +82,7 @@ export const Workflow = () => {
           eyebrow="_workflow"
           title={
             <>
-              Plan, code, run.
+              Open, invite, run.
               <br />
               <span className="text-zinc-500">One continuous loop.</span>
             </>
@@ -91,7 +102,7 @@ export const Workflow = () => {
                     {step.n}
                   </span>
                   <span className="font-mono text-xs tracking-widest text-twin">
-                    {step.label}_()
+                    {step.label}_
                   </span>
                 </div>
                 <p className="mt-6 text-sm leading-relaxed text-zinc-400">
@@ -107,330 +118,220 @@ export const Workflow = () => {
   )
 }
 
-const AgentChatCard = () => {
-  const [model, setModel] = useState<(typeof MODELS)[number]["id"]>("opus")
-  const active = MODELS.find((m) => m.id === model)!
+const PresenceCard = () => (
+  <div className="flex h-full flex-col rounded-2xl border border-landing-line bg-landing-card/40 p-6">
+    <div className="flex items-center justify-between">
+      <IconChip>
+        <MousePointer2Icon className="size-4" />
+      </IconChip>
+      <Chip label="presence" />
+    </div>
 
-  return (
-    <Spotlight className="rounded-2xl border border-landing-line bg-landing-card/40 p-6 md:col-span-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="grid size-7 place-items-center rounded-lg bg-ring/20 text-ring">
-            <SparkleIcon className="size-4" />
-          </span>
-          <span className="font-mono text-xs tracking-widest text-zinc-300 uppercase">
-            agent chat
-          </span>
-        </div>
-        <span className="flex items-center gap-1.5 rounded-full border border-landing-line px-2.5 py-1 font-mono text-[10px] text-zinc-400">
-          <span className="size-1.5 animate-pulse rounded-full bg-emerald-400" />
-          streaming
-        </span>
-      </div>
+    <h3 className="mt-5 text-xl font-semibold tracking-tight">
+      Presence, native.
+    </h3>
+    <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+      Every session shows the crew — cursors, carets and who&apos;s on which
+      file, live from the first keystroke.
+    </p>
 
-      <div className="mt-6 flex flex-col gap-3">
-        <div className="max-w-[70%] self-end rounded-2xl rounded-br-sm bg-primary/10 px-4 py-2.5 text-sm text-zinc-200">
-          add a confirm dialog before we ship
-        </div>
-
-        <div className="max-w-[85%] self-start">
-          <div className="flex items-center gap-2 px-1 pb-1.5">
-            <CastorGlyph className="size-4" />
-            <span className="font-mono text-[11px] text-zinc-500">
-              agent · <span className="text-twin">{model}</span>
-            </span>
-          </div>
-          <div className="rounded-2xl rounded-bl-sm border border-landing-line bg-landing-card/80 px-4 py-3 text-sm text-zinc-300">
-            On it. Dropping a confirmation into{" "}
-            <span className="font-mono text-sky-300">orbit.tsx</span> — and I
-            softened the border while I was there.
-            <div className="mt-3 rounded-lg bg-[oklch(0.14_0.012_264)] px-3 py-2 font-mono text-xs">
-              <span className="text-emerald-400">+</span>{" "}
-              <span className="text-sky-300">&lt;ConfirmationDialog</span>{" "}
-              <span className="text-amber-300">{"tone=\"soft\""}</span>{" "}
-              <span className="text-sky-300">/&gt;</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {MODELS.map((m) => (
-          <button
-            key={m.id}
-            onClick={() => setModel(m.id)}
+    <div className="mt-auto pt-6">
+      <div className="flex -space-x-2">
+        {SESSION.crew.map((m) => (
+          <span
+            key={m.name}
+            title={m.name}
             className={cn(
-              "font-mono rounded-lg border px-3 py-1.5 text-xs transition-all",
-              model === m.id
-                ? "border-ring/60 bg-ring/15 text-zinc-100 shadow-[0_0_16px_-6px_var(--ring)]"
-                : "border-landing-line bg-landing-card/50 text-zinc-500 hover:border-ring/30 hover:text-zinc-300"
+              "grid size-6 place-items-center rounded-full text-[9px] font-medium text-landing ring-2 ring-landing",
+              m.color
             )}
           >
-            {m.label}
-          </button>
+            {m.initial}
+          </span>
         ))}
-        <span className="font-mono text-[11px] text-zinc-600">
-          + more models docked later
-        </span>
       </div>
-      <p className="mt-3 text-xs text-zinc-500 italic">{active.copy}</p>
-      <div className="mt-4 flex items-center gap-2 font-mono text-[10px] text-zinc-600">
-        <span>model://anthropic/{model}</span>
-        <span className="h-px flex-1 bg-landing-line" />
-        <span>0 tickets opened</span>
+      <div className="mt-3 rounded-lg border border-landing-line bg-[oklch(0.14_0.012_264)] px-2.5 py-2 font-mono text-[11px] text-zinc-400">
+        <span className="text-zinc-600">7</span>{" "}
+        <span className="text-sky-300">{"<h1>"}</span>
+        <span className="text-zinc-200"> Two of you.</span>
+        <span className="text-sky-300">{"</h1>"}</span>
+        <span className="ml-1 inline-block h-[1.05em] w-[2px] translate-y-[2px] animate-caret bg-sky-300" />
+        <span className="ml-2 inline-block h-[1.05em] w-[2px] translate-y-[2px] bg-twin align-baseline" />
       </div>
-    </Spotlight>
-  )
-}
-
-const PreviewCard = () => {
-  const [device, setDevice] = useState<"desktop" | "mobile">("desktop")
-
-  return (
-    <Spotlight className="rounded-2xl border border-landing-line bg-landing-card/40 p-6 md:col-span-2">
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-xs tracking-widest text-zinc-300 uppercase">
-          preview
-        </span>
-        <div className="flex items-center gap-1 rounded-lg border border-landing-line p-0.5">
-          <button
-            onClick={() => setDevice("desktop")}
-            aria-label="Desktop preview"
-            className={cn(
-              "rounded-md px-2 py-1 transition-colors",
-              device === "desktop"
-                ? "bg-ring/20 text-zinc-100"
-                : "text-zinc-500 hover:text-zinc-300"
-            )}
-          >
-            <MousePointer2Icon className="size-3.5" />
-          </button>
-          <button
-            onClick={() => setDevice("mobile")}
-            aria-label="Mobile preview"
-            className={cn(
-              "rounded-md px-2 py-1 transition-colors",
-              device === "mobile"
-                ? "bg-ring/20 text-zinc-100"
-                : "text-zinc-500 hover:text-zinc-300"
-            )}
-          >
-            <PhoneIcon className="size-3.5" />
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-6 flex h-52 items-center justify-center rounded-xl bg-[radial-gradient(80%_90%_at_50%_0%,oklch(0.42_0.12_262/0.2),oklch(0.15_0.012_264)_60%)] p-4">
-        <div
-          style={{
-            width: device === "desktop" ? "100%" : "150px",
-            transition: "width 400ms cubic-bezier(0.22,1,0.36,1)",
-          }}
-          className="mx-auto"
-        >
-          <div className="h-full rounded-lg border border-landing-line bg-landing-card p-4 shadow-xl">
-            <div className="flex items-center gap-2">
-              <CastorGlyph className="size-4" />
-              <span className="font-mono text-[9px] text-zinc-500">
-                space-station
-              </span>
-            </div>
-            <p className="mt-2.5 text-sm font-semibold tracking-tight">
-              One codebase.
-            </p>
-            <p className="mt-0.5 text-[10px] text-zinc-500">
-  previews that don&apos;t lie
-</p>
-            <div
-              className={cn(
-                "mt-3 flex gap-1.5",
-                device === "mobile" && "flex-col"
-              )}
-            >
-              <span className="rounded bg-primary px-2 py-1 text-center text-[9px] font-semibold text-primary-foreground">
-                Deploy
-              </span>
-              <span className="rounded border border-landing-line px-2 py-1 text-center text-[9px] text-zinc-400">
-                Share
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-3 flex items-center gap-1.5 font-mono text-[10px] text-emerald-400/80">
-        <span className="size-1.5 rounded-full bg-emerald-400" />
-        synced to live preview
-      </div>
-    </Spotlight>
-  )
-}
-
-const CmdPaletteCard = () => {
-  const [open, setOpen] = useState(false)
-  const [running, setRunning] = useState<string | null>(null)
-  const commands = [
-    { k: "ask the agent", keys: ["⌘", "K"], soon: false },
-    { k: "open live preview", keys: ["⌥", "⌘", "P"], soon: false },
-    { k: "invite a teammate", keys: ["·", "soon"], soon: true },
-    { k: "deploy to prod", keys: ["⌥", "⌘", "S"], soon: false },
-  ]
-
-  return (
-    <Spotlight className="rounded-2xl border border-landing-line bg-landing-card/40 p-6 md:col-span-2">
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-xs tracking-widest text-zinc-300 uppercase">
-          command bar
-        </span>
-        <CommandIcon className="size-4 text-zinc-500" />
-      </div>
-
-      <button
-        onClick={() => setOpen(true)}
-        className="mt-6 flex w-full items-center justify-between rounded-xl border border-landing-line bg-landing-card/70 px-3 py-2.5 text-left text-xs text-zinc-500 transition-colors hover:border-ring/40 hover:text-zinc-300"
-      >
-        ask castor to do anything…
-        <Kbd className="border bg-landing-card/80">⌘K</Kbd>
-      </button>
-
-      {open && (
-        <div className="mt-4 flex flex-col gap-1.5">
-          {commands.map((cmd) => (
-            <button
-              key={cmd.k}
-              disabled={cmd.soon}
-              onClick={() => {
-                setRunning(cmd.k)
-                setTimeout(() => {
-                  setRunning(null)
-                  setOpen(false)
-                }, 1200)
-              }}
-              className={cn(
-                "flex items-center justify-between rounded-lg px-3 py-2 text-xs transition-colors",
-                cmd.soon
-                  ? "cursor-not-allowed text-zinc-700"
-                  : "text-zinc-300 hover:bg-ring/15"
-              )}
-            >
-              <span className="flex items-center gap-2">
-                {running === cmd.k && (
-                  <span className="size-1.5 animate-pulse rounded-full bg-twin" />
-                )}
-                {cmd.k}
-              </span>
-              <KbdGroup keys={cmd.keys} />
-            </button>
-          ))}
-        </div>
-      )}
-
-      <div className="mt-6 flex items-center justify-between border-t border-landing-line pt-3">
-        {running ? (
-          <span className="font-mono text-[11px] text-twin">
-            ▸ running: {running}
-          </span>
-        ) : (
-          <span className="font-mono text-[11px] text-zinc-600">
-            power-ups docked {open ? "· tap a command" : "· hit ⌘K"}
-          </span>
-        )}
-      </div>
-    </Spotlight>
-  )
-}
-
-const KbdGroup = ({ keys }: { keys: string[] }) => (
-  <span className="flex items-center gap-0.5">
-    {keys.map((k, i) => (
-      <kbd
-        key={i}
-        className="rounded border border-landing-line bg-landing-card/80 px-1.5 py-0.5 font-mono text-[9px] text-zinc-500"
-      >
-        {k}
-      </kbd>
-    ))}
-  </span>
+      <p className="mt-2.5 font-mono text-[10px] text-zinc-500">
+        pollux is on line 7 with you
+      </p>
+    </div>
+  </div>
 )
 
-const WorkspacesCard = () => {
-  return (
-    <Spotlight className="rounded-2xl border border-landing-line bg-landing-card/40 p-6 md:col-span-4">
-      <div className="grid gap-8 md:grid-cols-2 md:items-center">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs tracking-widest text-zinc-300 uppercase">
-              workspaces
-            </span>
-            <span className="flex items-center gap-1 rounded-full border border-dashed border-twin/50 px-2 py-0.5 font-mono text-[10px] text-twin">
-              <span className="size-1.5 animate-pulse rounded-full bg-twin" />
-              arriving soon
-            </span>
-          </div>
-          <h3
-            className={cn(
-              "mt-4 text-2xl font-semibold tracking-tight",
-              display.className
-            )}
-          >
-            Called Castor for a reason — the twin stars.
-          </h3>
-          <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-            Invite a developer, share one live preview, and let the review
-            happen in the same window where the code lives. A second pair of
-            eyes, docked like the second star.
-          </p>
-          <div className="mt-5 flex items-center gap-2 font-mono text-[11px] text-zinc-500">
-            <span>castor workspace attach @teammate</span>
-            <span className="text-zinc-700">▸ 404 — soon</span>
-          </div>
+const PreviewCard = () => (
+  <div className="flex h-full flex-col rounded-2xl border border-landing-line bg-landing-card/40 p-6">
+    <div className="flex items-center justify-between">
+      <IconChip>
+        <GlobeIcon className="size-4" />
+      </IconChip>
+      <Chip label="preview" />
+    </div>
+
+    <h3 className="mt-5 text-xl font-semibold tracking-tight">
+      One preview for all.
+    </h3>
+    <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+      The in-browser render syncs to every teammate at once. What you see is
+      the server.
+    </p>
+
+    <div className="mt-auto pt-6">
+      <div className="rounded-lg border border-landing-line bg-[oklch(0.14_0.012_264)] p-3">
+        <div className="flex items-center gap-1.5 font-mono text-[9px] text-zinc-500">
+          <span className="size-1.5 rounded-full bg-emerald-400" />
+          shared /preview
         </div>
-
-        <div className="relative rounded-xl border border-landing-line bg-[oklch(0.14_0.012_264)] p-4 font-mono text-[12px] leading-6">
-          <div className="mb-2 flex items-center justify-between text-[10px] text-zinc-600">
-            <span>shared session · 2 carets</span>
-            <span className="flex items-center gap-1 text-emerald-400/80">
-              <span className="size-1.5 rounded-full bg-emerald-400" />
-              live
-            </span>
-          </div>
-          <div>
-            <span className="text-zinc-600">1</span>{" "}
-            <span className="text-sky-300">{"<h1>"}</span>
-            <span className="text-zinc-200"> Ship it, together.</span>
-            <span className="text-sky-300">{"</h1>"}</span>
-            <span className="ml-1 inline-block h-[1.05em] w-[2px] translate-y-[2px] animate-caret bg-sky-300" />
-          </div>
-          <div className="mt-1">
-            <span className="text-zinc-600">2</span>{" "}
-            <span className="text-zinc-500">{"/* "}</span>
-            <span className="text-zinc-600">lgtm from pollux</span>
-            <span className="text-zinc-500">{" */"}</span>
-            <span className="ml-1 inline-block h-[1.05em] w-[2px] translate-y-[2px] animate-caret rounded-sm bg-twin" />
-          </div>
-          <div className="mt-1">
-            <span className="text-zinc-600">3</span>{" "}
-            <span className="text-zinc-300">
-              <span className="text-violet-300">await</span> deploy(
-            </span>
-            <span className="text-emerald-300">{"\"prod\""}</span>
-            <span className="text-zinc-300">)</span>
-          </div>
-
-          <div className="absolute right-3 bottom-2 flex items-center gap-2">
-            <span className="flex items-center gap-1 rounded-md bg-sky-300/15 px-1.5 py-0.5 text-[10px] text-sky-300 ring-1 ring-sky-300/30">
-              you
-            </span>
-            <span className="flex items-center gap-1 rounded-md bg-twin/15 px-1.5 py-0.5 text-[10px] text-twin ring-1 ring-twin/40">
-              <CastorGlyph className="size-3" />
-              pollux
-            </span>
-          </div>
+        <p className="mt-2.5 text-sm font-semibold tracking-tight">
+          One codebase.
+        </p>
+        <p className="mt-0.5 text-[10px] text-zinc-500">
+          live for the whole crew
+        </p>
+        <div className="mt-3 flex gap-1.5">
+          <span className="rounded bg-primary px-2 py-1 text-[9px] font-semibold text-primary-foreground">
+            Deploy
+          </span>
+          <span className="rounded border border-landing-line px-2 py-1 text-[9px] text-zinc-400">
+            Share
+          </span>
         </div>
       </div>
-    </Spotlight>
-  )
-}
+      <p className="mt-2.5 font-mono text-[10px] text-emerald-400/80">
+        <span className="size-1.5 inline-block rounded-full bg-emerald-400" />{" "}
+        synced for every teammate
+      </p>
+    </div>
+  </div>
+)
+
+const SyncCard = () => (
+  <div className="flex h-full flex-col rounded-2xl border border-landing-line bg-landing-card/40 p-6">
+    <div className="flex items-center justify-between">
+      <IconChip>
+        <GitMergeIcon className="size-4" />
+      </IconChip>
+      <Chip label="sync" />
+    </div>
+
+    <h3 className="mt-5 text-xl font-semibold tracking-tight">Zero drift.</h3>
+    <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+      Edits stream as you type and merge conflict-free — nothing out of date,
+      nothing overwritten.
+    </p>
+
+    <div className="mt-auto pt-6 font-mono text-[11px]">
+      <div className="flex items-center gap-2 rounded-lg border border-landing-line bg-[oklch(0.14_0.012_264)] px-2.5 py-1.5 text-zinc-400">
+        <span className="size-1.5 rounded-full bg-sky-400" />
+        <span className="text-zinc-300">you</span> · row 6
+      </div>
+      <div className="-mt-1.5 ml-6 flex items-center gap-2 rounded-lg border border-landing-line bg-[oklch(0.14_0.012_264)] px-2.5 py-1.5 text-zinc-400">
+        <span className="size-1.5 rounded-full bg-twin" />
+        <span className="text-zinc-300">pollux</span> · same row
+      </div>
+      <p className="mt-2.5 flex items-center gap-1.5 text-[10px] text-emerald-400/80">
+        <CheckIcon className="size-3" /> merged — no conflict
+      </p>
+    </div>
+  </div>
+)
+
+const LayerPane = ({
+  name,
+  layer,
+  dot,
+  caret,
+  className,
+}: {
+  name: string
+  layer: string
+  dot: string
+  caret: string
+  className?: string
+}) => (
+  <div
+    className={cn(
+      "rounded-xl border border-landing-line bg-[oklch(0.155_0.014_264)]/95 p-3.5 font-mono text-[11px] leading-5 shadow-2xl backdrop-blur",
+      className
+    )}
+  >
+    <div className="flex items-center gap-1.5">
+      <span className={cn("size-1.5 rounded-full", dot)} />
+      <span className="text-zinc-300">{name}</span>
+      <span className="ml-auto text-[9px] tracking-widest text-zinc-600">
+        {layer}
+      </span>
+    </div>
+    <div className="mt-2.5 truncate text-zinc-500">
+      <span className="text-zinc-600">12</span>{" "}
+      <span className="text-sky-300">{"<h1>"}</span>
+      <span className="text-zinc-200"> Ship it, together.</span>
+      <span className="text-sky-300">{"</h1>"}</span>
+      <span className={cn("ml-0.5 inline-block h-[1em] w-[2px] translate-y-[2px]", caret)} />
+    </div>
+    <div className="truncate text-zinc-600">
+      13 <span className="text-zinc-500">{"/* "}moves when they move{" */"}</span>
+    </div>
+  </div>
+)
+
+const MultiLayerCard = () => (
+  <Spotlight className="rounded-2xl border border-landing-line bg-landing-card/40 p-6 md:p-8 md:col-span-6">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-2">
+        <IconChip>
+          <LayersIcon className="size-4" />
+        </IconChip>
+        <Chip label="multilayer" />
+      </div>
+      <span className="rounded-full border border-dashed border-twin/50 px-2.5 py-1 font-mono text-[10px] text-twin">
+        powered by liveblocks
+      </span>
+    </div>
+
+    <h3 className="mt-5 text-2xl font-semibold tracking-tight sm:text-3xl">
+      Multilayer sessions.
+    </h3>
+    <p className="mt-3 max-w-xl text-sm leading-relaxed text-zinc-400">
+      Same file, everyone in their own live viewport. Scroll free, snap to a
+      caret, or follow a teammate&apos;s view — every layer stays one truth.
+    </p>
+
+    <div className="mt-8 grid gap-4 md:grid-cols-3">
+      <LayerPane
+        name="you"
+        layer="layer 01"
+        dot="bg-sky-400"
+        caret="animate-caret bg-sky-300"
+      />
+      <LayerPane
+        name="pollux"
+        layer="layer 02"
+        dot="bg-twin"
+        caret="animate-caret bg-twin"
+        className="md:-rotate-1 md:translate-y-1"
+      />
+      <LayerPane
+        name="henge"
+        layer="layer 03"
+        dot="bg-violet-400"
+        caret="animate-caret bg-violet-300"
+        className="md:rotate-1 md:translate-y-2"
+      />
+    </div>
+
+    <div className="mt-5 flex items-center gap-2 font-mono text-[10px] text-zinc-500">
+      <span className="text-twin">✦</span>
+      three layers, one file — scroll free, land together
+    </div>
+  </Spotlight>
+)
 
 export const Features = () => {
   return (
@@ -440,26 +341,26 @@ export const Features = () => {
           eyebrow="_product"
           title={
             <>
-              The IDE that
+              Multiplayer,
               <br />
-              <span className="text-zinc-500">belongs in a browser.</span>
+              <span className="text-zinc-500">by default.</span>
             </>
           }
-          sub="Everything is dockable — chat, terminal, preview, teammates. Nothing is static."
+          sub="Every Castor session is live from the first keystroke — cursors, previews and comments flow to the whole workspace. No mode, no switch."
         />
 
         <div className="mt-14 grid gap-4 md:grid-cols-6">
-          <Reveal className="md:col-span-4">
-            <AgentChatCard />
+          <Reveal className="md:col-span-2">
+            <PresenceCard />
           </Reveal>
-          <Reveal className="md:col-span-2" delay={80}>
+          <Reveal className="md:col-span-2" delay={70}>
             <PreviewCard />
           </Reveal>
-          <Reveal className="md:col-span-2" delay={40}>
-            <CmdPaletteCard />
+          <Reveal className="md:col-span-2" delay={140}>
+            <SyncCard />
           </Reveal>
-          <Reveal className="md:col-span-4" delay={120}>
-            <WorkspacesCard />
+          <Reveal className="md:col-span-6" delay={90}>
+            <MultiLayerCard />
           </Reveal>
         </div>
       </div>

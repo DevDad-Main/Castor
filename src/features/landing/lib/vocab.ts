@@ -1,36 +1,26 @@
 export const castor = {
-  tagline: "the ai cloud ide · designed for two",
-  heroShadows: ["soften the border", "explain this diff", "draft the README"],
+  tagline: "the multiplayer cloud ide · two carets, one workspace",
+} as const
+
+export const SESSION = {
+  workspace: "space-station",
+  file: "orbit.tsx",
+  crew: [
+    { name: "you", initial: "c", color: "bg-sky-400", ring: "ring-sky-400/40" },
+    { name: "pollux", initial: "p", color: "bg-twin", ring: "ring-twin/50" },
+    { name: "henge", initial: "h", color: "bg-violet-400", ring: "ring-violet-400/40" },
+  ],
 } as const
 
 export const TICKER_ITEMS = [
   "npx castor create",
-  "castor ask \"why is 12 failing?\"",
-  "⌘K agent",
-  "model://anthropic/opus",
-  "castor share @teammate",
+  "castor session --team",
+  "castor share @pollux",
+  "live cursors · all of us",
+  "snap to a caret",
   "npm run preview",
-  "0 manual setup",
-  "in-browser previews",
-  "git push --onward",
-  "a second pair of eyes",
-  "castor workspace attach",
-] as const
-
-export const MODELS = [
-  {
-    id: "opus",
-    label: "opus",
-    copy: "Deep reasoning. For hard problems and long refactors.",
-  },
-  {
-    id: "sonnet",
-    label: "sonnet",
-    copy: "The balance. Fast, thoughtful, right most of the time.",
-  },
-  {
-    id: "haiku",
-    label: "haiku",
-    copy: "Lightning. Autocomplete and doodles on the fly.",
-  },
+  "no install · one tab",
+  "lgtm — merge when green",
+  "2 carets, 0 merge",
+  "workspace: orbit-station",
 ] as const
