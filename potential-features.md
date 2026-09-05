@@ -1,0 +1,1 @@
+- Potentially add an additional functionality for users to search the web and do some web fetches with the firecrawl search functionality
