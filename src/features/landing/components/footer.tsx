@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { SignUpButton } from "@clerk/nextjs"
+import Link from "next/link"
+
 import { Button } from "@/components/ui/button"
 import { ArrowRightIcon, SparkleIcon } from "lucide-react"
 import { cn } from "cn"
@@ -141,12 +142,12 @@ const Cta = () => {
             let the session do the sync — AI is on call, between the lines.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <SignUpButton>
-              <Button size="lg" className="gap-2 text-base">
+            <Button asChild size="lg" className="gap-2 text-base">
+              <Link href="/sign-up">
                 get started free
                 <ArrowRightIcon className="size-4" />
-              </Button>
-            </SignUpButton>
+              </Link>
+            </Button>
             <span className="flex items-center gap-1.5 font-mono text-xs text-zinc-500">
               <SparkleIcon className="size-3 text-twin" />
               no install · no credit card · one tab

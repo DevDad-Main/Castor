@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { cn } from "cn"
-import { SignInButton, SignUpButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { ArrowRightIcon, SparkleIcon } from "lucide-react"
 import { CastorLogo } from "./brand"
@@ -55,16 +55,12 @@ export const Navbar = () => {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <SignInButton>
-            <Button variant="ghost" size="sm" className="font-mono text-xs text-zinc-300">
-              sign in
-            </Button>
-          </SignInButton>
-          <SignUpButton>
-            <Button size="sm" className="font-mono text-xs">
-              get started
-            </Button>
-          </SignUpButton>
+          <Button asChild variant="ghost" size="sm" className="font-mono text-xs text-zinc-300">
+            <Link href="/sign-in">sign in</Link>
+          </Button>
+          <Button asChild size="sm" className="font-mono text-xs">
+            <Link href="/sign-up">get started</Link>
+          </Button>
         </div>
       </div>
     </header>
@@ -136,12 +132,12 @@ export const Hero = () => {
 
           <Reveal delay={200}>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <SignUpButton>
-                <Button size="lg" className="gap-2 text-base">
+              <Button asChild size="lg" className="gap-2 text-base">
+                <Link href="/sign-up">
                   get started free
                   <ArrowRightIcon className="size-4" />
-                </Button>
-              </SignUpButton>
+                </Link>
+              </Button>
               <a href="#workflow">
                 <Button size="lg" variant="ghost" className="font-mono text-sm text-zinc-300">
                   ./watch-it-run

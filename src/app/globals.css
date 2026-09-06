@@ -147,6 +147,8 @@
   --animate-aurora: aurora 16s ease-in-out infinite;
   --animate-twinkle: twinkle 3.6s ease-in-out infinite;
   --animate-shimmer: shimmer 2.4s linear infinite;
+  --animate-shooting-star: shooting-star 12s cubic-bezier(0.4, 0, 0.6, 1)
+    infinite;
 
   @keyframes cell-ripple {
     0% {
@@ -217,6 +219,24 @@
     }
     100% {
       background-position: -200% 0;
+    }
+  }
+
+  @keyframes shooting-star {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 0, 0) rotate(218deg);
+    }
+    0.6% {
+      opacity: 1;
+    }
+    2.4% {
+      opacity: 0;
+      transform: translate3d(-520px, 340px, 0) rotate(218deg);
+    }
+    100% {
+      opacity: 0;
+      transform: translate3d(-520px, 340px, 0) rotate(218deg);
     }
   }
 }

@@ -44,3 +44,52 @@ export const get = query({
       .collect()
   },
 })
+
+export const getById = query({
+  args: {
+    id: v.id("projects"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await verifyAuth(ctx)
+
+    const project = await ctx.db.get("projects", args.id)
+
+    if (!project) {
+      throw new Error("Project not found")
+    }
+
+    if (project.ownerId !== identity.subject) {
+      throw new Error("Unauthorized, You do not have access to this project")
+    }
+
+    return project
+  },
+})
+
+// TODO:  add name validation , so users cant change the name of a project to an empty string or exisiting project name
+export const renameProject = mutation({
+  args: {
+    id: v.id("projects"),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await verifyAuth(ctx)
+
+    const project = await ctx.db.get("projects", args.id)
+
+    if (!project) {
+      throw new Error("Project not found")
+    }
+
+    if (project.ownerId !== identity.subject) {
+      throw new Error("Unauthorized, You do not have access to this project")
+    }
+
+    await ctx.db.patch("projects", args.id, {
+      name: args.name,
+      updatedAt: Date.now(),
+    })
+
+    return project
+  },
+})

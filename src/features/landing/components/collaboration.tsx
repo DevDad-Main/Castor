@@ -1,6 +1,6 @@
 "use client"
 
-import { SignUpButton } from "@clerk/nextjs"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRightIcon, GitBranchIcon } from "lucide-react"
 import { cn } from "cn"
@@ -68,12 +68,12 @@ export const Collaboration = () => {
 
           <Reveal delay={120}>
             <div className="mt-7 flex flex-wrap items-center gap-3">
-              <SignUpButton>
-                <Button size="lg" className="gap-2">
+              <Button asChild size="lg" className="gap-2">
+                <Link href="/sign-up">
                   join the workspace waitlist
                   <ArrowRightIcon className="size-4" />
-                </Button>
-              </SignUpButton>
+                </Link>
+              </Button>
               <span className="font-mono text-xs text-zinc-500">
                 eta — when it feels ready
               </span>
