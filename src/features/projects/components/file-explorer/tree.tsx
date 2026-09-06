@@ -14,6 +14,7 @@ import {
 import { getItemPadding } from "./constants"
 import { LoadingRow } from "./loading-row"
 import { CreateInput } from "./create-input"
+import { baseRowClass } from "./tree-item-wrapper"
 
 import { Doc, Id } from "../../../../../convex/_generated/dataModel"
 
@@ -97,7 +98,7 @@ export const Tree = ({
           deleteFile({ id: item._id })
         }}
       >
-        <FileIcon fileName={fileName} autoAssign className="size-4" />
+        <FileIcon fileName={fileName} autoAssign className="size-4 shrink-0" />
         <span className="truncate text-sm">{fileName}</span>
       </TreeItemWrapper>
     )
@@ -111,11 +112,11 @@ export const Tree = ({
         <div className="flex items-center gap-0.5">
           <ChevronRightIcon
             className={cn(
-              "text-muted-foreground size-4 shrink-0",
+              "text-muted-foreground size-4 shrink-0 transition-transform",
               isOpen && "rotate-90"
             )}
           />
-          <FolderIcon folderName={folderName} className="size-4" />
+          <FolderIcon folderName={folderName} className="size-4 shrink-0" />
         </div>
         <span className="truncate text-sm">{folderName}</span>
       </>
@@ -126,7 +127,7 @@ export const Tree = ({
         <>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="group hover:bg-accent/30 flex h-5.5 w-full items-center gap-1"
+            className={baseRowClass}
             style={{ paddingLeft: getItemPadding(level, false) }}
           >
             {folderRender}

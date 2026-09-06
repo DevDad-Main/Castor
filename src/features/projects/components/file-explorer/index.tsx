@@ -1,15 +1,22 @@
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "cn"
+import { FolderIcon } from "@react-symbols/icons/utils"
 import {
   ChevronRight,
-  CopyMinusIcon,
+  ChevronsUpIcon,
   FilePlusCornerIcon,
+  FileStackIcon,
   FolderPlusIcon,
 } from "lucide-react"
 import { useState } from "react"
 import { Id } from "../../../../../convex/_generated/dataModel"
 import { useProject } from "../hooks/use-projects"
-import { Button } from "@/components/ui/button"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import {
   useCreateFile,
   useCreateFolder,
@@ -18,6 +25,34 @@ import {
 import { CreateInput } from "./create-input"
 import { LoadingRow } from "./loading-row"
 import { Tree } from "./tree"
+import { getItemPadding } from "./constants"
+
+const PanelAction = ({
+  label,
+  onClick,
+  children,
+}: {
+  label: string
+  onClick: (e: React.MouseEvent) => void
+  children: React.ReactNode
+}) => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={onClick}
+            aria-label={label}
+            className="text-muted-foreground hover:bg-accent/60 hover:text-foreground grid size-6 cursor-pointer place-items-center rounded transition-colors"
+          >
+            {children}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">{label}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+}
 
 export const FileExplorer = ({ projectId }: { projectId: Id<"projects"> }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -48,13 +83,57 @@ export const FileExplorer = ({ projectId }: { projectId: Id<"projects"> }) => {
     }
   }
 
+  const startCreating = (type: "file" | "folder") => {
+    setIsOpen(true)
+    setCreating(type)
+  }
+
   return (
-    <div className="bg-sidebar h-full">
-      <ScrollArea>
-        <div
-          role="button"
+    <div className="bg-sidebar group/panel flex h-full flex-col">
+      <div className="border-border/60 flex h-9 shrink-0 items-center gap-1.5 border-b px-2">
+        <FileStackIcon className="text-muted-foreground size-4" />
+        <span className="text-muted-foreground text-xs font-medium">
+          Explorer
+        </span>
+
+        <div className="ml-auto flex items-center gap-0.5 opacity-0 transition-opacity group-hover/panel:opacity-100">
+          <PanelAction
+            label="New file"
+            onClick={(e) => {
+              e.stopPropagation()
+              startCreating("file")
+            }}
+          >
+            <FilePlusCornerIcon className="size-3.5" />
+          </PanelAction>
+
+          <PanelAction
+            label="New folder"
+            onClick={(e) => {
+              e.stopPropagation()
+              startCreating("folder")
+            }}
+          >
+            <FolderPlusIcon className="size-3.5" />
+          </PanelAction>
+
+          <PanelAction
+            label="Collapse all"
+            onClick={(e) => {
+              e.stopPropagation()
+              setCollapseKey((prev) => prev + 1)
+            }}
+          >
+            <ChevronsUpIcon className="size-3.5" />
+          </PanelAction>
+        </div>
+      </div>
+
+      <ScrollArea className="min-h-0 flex-1">
+        <button
           onClick={() => setIsOpen((value) => !value)}
-          className="group/project bg-accent flex h-5.5 w-full cursor-pointer items-center gap-0.5 text-left font-bold"
+          className="hover:bg-accent/50 flex h-7 w-full cursor-pointer items-center gap-1.5 pr-2 text-left"
+          style={{ paddingLeft: getItemPadding(0, false) }}
         >
           <ChevronRight
             className={cn(
@@ -62,51 +141,14 @@ export const FileExplorer = ({ projectId }: { projectId: Id<"projects"> }) => {
               isOpen && "rotate-90"
             )}
           />
-          <p className="line-clamp-1 text-xs uppercase">
+          <FolderIcon
+            folderName={project?.name ?? "workspace"}
+            className="text-muted-foreground size-4 shrink-0"
+          />
+          <span className="text-foreground truncate text-sm font-medium">
             {project?.name ?? "Loading..."}
-          </p>
-          <div className="ml-auto flex items-center gap-0.5 opacity-0 transition-none duration-0 group-hover/project:opacity-100">
-            <Button
-              onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                setIsOpen(true)
-                // Set creating to true
-                setCreating("file")
-              }}
-              variant="highlight"
-              size="icon-xxs"
-            >
-              <FilePlusCornerIcon className="size-3.5" />
-            </Button>
-
-            <Button
-              onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                setIsOpen(true)
-                setCreating("folder")
-              }}
-              variant="highlight"
-              size="icon-xxs"
-            >
-              <FolderPlusIcon className="size-3.5" />
-            </Button>
-
-            <Button
-              onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                // reset Collapse
-                setCollapseKey((prev) => prev + 1)
-              }}
-              variant="highlight"
-              size="icon-xxs"
-            >
-              <CopyMinusIcon className="size-3.5" />
-            </Button>
-          </div>
-        </div>
+          </span>
+        </button>
 
         {isOpen && (
           <>

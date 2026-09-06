@@ -7,8 +7,20 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
+import {
+  FilePlus2Icon,
+  FolderPlusIcon,
+  PencilIcon,
+  Trash2Icon,
+} from "lucide-react"
 import { getItemPadding } from "./constants"
 import { Doc } from "../../../../../convex/_generated/dataModel"
+
+export const baseRowClass = cn(
+  "flex h-6 w-full items-center gap-1 rounded outline-none",
+  "text-muted-foreground hover:bg-accent/40 hover:text-foreground",
+  "focus-visible:ring-1 focus-visible:ring-ring/40 focus-visible:ring-inset"
+)
 
 export const TreeItemWrapper = ({
   item,
@@ -40,8 +52,8 @@ export const TreeItemWrapper = ({
           onClick={onClick}
           onDoubleClick={onDoubleClick}
           className={cn(
-            "group hover:bg-accent/30 focus:ring-ring flex h-5.5 w-full items-center gap-1 outline-none focus:ring-1 focus:ring-inset",
-            isActive && "bg-accent/30"
+            baseRowClass,
+            isActive && "bg-accent/40 text-foreground"
           )}
           style={{ paddingLeft: getItemPadding(level, item.type === "file") }}
           onKeyDown={(e) => {
@@ -50,33 +62,47 @@ export const TreeItemWrapper = ({
               onRename?.()
             }
           }}
-        >{children}</button>
+        >
+          {children}
+        </button>
       </ContextMenuTrigger>
       <ContextMenuContent
         onCloseAutoFocus={(e) => e.preventDefault()}
-        className="w-64"
+        className="w-56"
       >
         {item.type === "folder" && (
           <>
-            <ContextMenuItem onClick={onCreateFile} className="text-sm">
-              New File...
+            <ContextMenuItem onClick={onCreateFile} className="gap-2 text-sm">
+              <FilePlus2Icon className="text-muted-foreground size-3.5" />
+              New File
+              <ContextMenuShortcut className="font-mono">N</ContextMenuShortcut>
             </ContextMenuItem>
 
-            <ContextMenuItem onClick={onCreateFolder} className="text-sm">
-              New Folder...
+            <ContextMenuItem onClick={onCreateFolder} className="gap-2 text-sm">
+              <FolderPlusIcon className="text-muted-foreground size-3.5" />
+              New Folder
+              <ContextMenuShortcut className="font-mono">F</ContextMenuShortcut>
             </ContextMenuItem>
             <ContextMenuSeparator />
           </>
         )}
 
-        <ContextMenuItem onClick={onRename} className="text-sm">
+        <ContextMenuItem onClick={onRename} className="gap-2 text-sm">
+          <PencilIcon className="text-muted-foreground size-3.5" />
           Rename...
-          <ContextMenuShortcut>Enter</ContextMenuShortcut>
+          <ContextMenuShortcut className="font-mono">↵</ContextMenuShortcut>
         </ContextMenuItem>
 
-        <ContextMenuItem onClick={onDelete} className="text-sm">
+        <ContextMenuSeparator />
+
+        <ContextMenuItem
+          onClick={onDelete}
+          variant="destructive"
+          className="gap-2 text-sm"
+        >
+          <Trash2Icon className="size-3.5" />
           Delete Permanently
-          <ContextMenuShortcut>Ctrl + B</ContextMenuShortcut>
+          <ContextMenuShortcut className="font-mono">⌫</ContextMenuShortcut>
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

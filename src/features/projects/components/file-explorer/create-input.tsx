@@ -27,7 +27,7 @@ export const CreateInput = ({
 
   return (
     <div
-      className="bg-accent/30 flex h-5.5 w-full items-center gap-1"
+      className="border-ring/40 bg-accent/60 flex h-7 w-full items-center gap-1 rounded border"
       style={{ paddingLeft: getItemPadding(level, type === "file") }}
     >
       <div className="flex items-center gap-1.5">
@@ -52,7 +52,8 @@ export const CreateInput = ({
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="focus:ring-ring flex-1 bg-transparent text-sm outline-none focus:ring-1 focus:ring-inset"
+        placeholder={type === "file" ? "name.tsx" : "folder-name"}
+        className="placeholder:text-muted-foreground text-foreground flex-1 bg-transparent text-sm outline-none"
         onBlur={handleSubmit}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
