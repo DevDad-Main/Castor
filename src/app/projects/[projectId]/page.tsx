@@ -6,8 +6,8 @@ const ProjectIdPage = async ({
 }: {
   params: Promise<{ projectId: Id<"projects"> }>
 }) => {
-  const { projectId } = await params
-  return <ProjectIdView projectId={projectId} />
+  await params
+  return <ProjectIdView />
 }
 
 export default ProjectIdPage

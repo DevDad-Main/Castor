@@ -1,17 +1,35 @@
 "use client"
 
 import { cn } from "cn"
-import { Id } from "../../../../convex/_generated/dataModel"
 import { useState } from "react"
 import { Allotment } from "allotment"
 import { FaGithub } from "react-icons/fa"
-import { Code2Icon, EyeIcon, FileTextIcon, MonitorIcon } from "lucide-react"
-import { FileExplorer } from "./file-explorer"
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  Code2Icon,
+  Columns2Icon,
+  EyeIcon,
+  FileTextIcon,
+  LayoutPanelLeftIcon,
+  MonitorIcon,
+  RotateCcwIcon,
+} from "lucide-react"
 
-const MIN_SIDEBAR_WIDTH = 200
-const MAX_SIDEBAR_WIDTH = 480
-const DEFAULT_SIDEBAR_WIDTH = 264
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+import { ALL_PANELS, PANEL_META, type PanelId } from "./layout/config"
+import { useWorkspaceLayout } from "./layout/workspace-layout-context"
+
 const DEFAULT_MAIN_SIZE = 1000
+const DEFAULT_PREVIEW_SIZE = 460
 
 const Tab = ({
   icon,
@@ -28,13 +46,56 @@ const Tab = ({
     <button
       onClick={onClick}
       className={cn(
-        "text-muted-foreground hover:text-foreground hover:bg-accent/40 border-border/60 relative flex h-full items-center gap-2 border-r px-3.5 text-sm transition-colors",
+        "text-muted-foreground hover:text-foreground hover:bg-accent/40 border-border/60 relative flex h-full cursor-pointer items-center gap-2 border-r px-3.5 text-sm transition-colors",
         isActive && "bg-background text-foreground"
       )}
     >
       {icon}
       {label}
     </button>
+  )
+}
+
+const LayoutMenu = () => {
+  const { has, togglePanel, reset } = useWorkspaceLayout()
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="text-muted-foreground hover:bg-accent/50 hover:text-foreground flex h-7 cursor-pointer items-center gap-1.5 rounded-md px-2.5 text-sm transition-colors">
+          <LayoutPanelLeftIcon className="size-3.5" />
+          Layout
+          <ChevronDownIcon className="size-3.5" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuLabel className="text-xs">Panels</DropdownMenuLabel>
+        {ALL_PANELS.map((id: PanelId) => {
+          const meta = PANEL_META[id]
+          const Icon = meta.icon
+          return (
+            <DropdownMenuItem
+              key={id}
+              onClick={() => togglePanel(id)}
+              className="flex items-center justify-between gap-3"
+            >
+              <span className="flex items-center gap-2">
+                <Icon className="text-muted-foreground size-4" />
+                {meta.label}
+              </span>
+              {has(id) && (
+                <CheckIcon className="text-muted-foreground size-3.5" />
+              )}
+            </DropdownMenuItem>
+          )
+        })}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => reset()}>
+          <RotateCcwIcon className="text-muted-foreground size-4" />
+          Reset layout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
@@ -90,8 +151,11 @@ const BlankPreview = () => {
   )
 }
 
-const ProjectIdView = ({ projectId }: { projectId: Id<"projects"> }) => {
+const ProjectIdView = () => {
+  const { layout, setSplit } = useWorkspaceLayout()
   const [activeView, setActiveView] = useState<"editor" | "preview">("editor")
+
+  const isSplit = layout.split
 
   return (
     <div className="flex h-full flex-col">
@@ -99,57 +163,72 @@ const ProjectIdView = ({ projectId }: { projectId: Id<"projects"> }) => {
         <Tab
           icon={<Code2Icon className="size-4" />}
           label="Code"
-          isActive={activeView === "editor"}
-          onClick={() => setActiveView("editor")}
+          isActive={activeView === "editor" && !isSplit}
+          onClick={() => {
+            setSplit(false)
+            setActiveView("editor")
+          }}
+        />
+        <Tab
+          icon={<Columns2Icon className="size-4" />}
+          label="Side by side"
+          isActive={isSplit}
+          onClick={() => setSplit(true)}
         />
         <Tab
           icon={<EyeIcon className="size-4" />}
           label="Preview"
-          isActive={activeView === "preview"}
-          onClick={() => setActiveView("preview")}
+          isActive={activeView === "preview" && !isSplit}
+          onClick={() => {
+            setSplit(false)
+            setActiveView("preview")
+          }}
         />
 
-        <div className="ml-auto flex items-center pr-2">
+        <div className="ml-auto flex items-center gap-1 pr-2">
           <button className="text-muted-foreground hover:bg-accent/50 hover:text-foreground flex h-7 cursor-pointer items-center gap-1.5 rounded-md px-2.5 text-sm transition-colors">
             <FaGithub className="size-3.5" />
             Export
           </button>
+          <LayoutMenu />
         </div>
       </nav>
 
       <div className="relative min-h-0 flex-1">
-        <div
-          className={cn(
-            "absolute inset-0",
-            activeView === "editor" ? "visible" : "invisible"
-          )}
-        >
+        {isSplit ? (
           <Allotment
-            defaultSizes={[DEFAULT_SIDEBAR_WIDTH, DEFAULT_MAIN_SIZE]}
+            defaultSizes={[DEFAULT_MAIN_SIZE, DEFAULT_PREVIEW_SIZE]}
             className="h-full"
           >
-            <Allotment.Pane
-              snap
-              minSize={MIN_SIDEBAR_WIDTH}
-              maxSize={MAX_SIDEBAR_WIDTH}
-              preferredSize={DEFAULT_SIDEBAR_WIDTH}
-            >
-              <FileExplorer projectId={projectId} />
-            </Allotment.Pane>
-
             <Allotment.Pane className="min-w-0">
               <BlankEditor />
             </Allotment.Pane>
+            <Allotment.Pane minSize={240} preferredSize={DEFAULT_PREVIEW_SIZE}>
+              <div className="border-border/60 h-full border-l">
+                <BlankPreview />
+              </div>
+            </Allotment.Pane>
           </Allotment>
-        </div>
-        <div
-          className={cn(
-            "absolute inset-0",
-            activeView === "preview" ? "visible" : "invisible"
-          )}
-        >
-          <BlankPreview />
-        </div>
+        ) : (
+          <>
+            <div
+              className={cn(
+                "absolute inset-0",
+                activeView === "editor" ? "visible" : "invisible"
+              )}
+            >
+              <BlankEditor />
+            </div>
+            <div
+              className={cn(
+                "absolute inset-0",
+                activeView === "preview" ? "visible" : "invisible"
+              )}
+            >
+              <BlankPreview />
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

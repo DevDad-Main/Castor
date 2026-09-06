@@ -9,12 +9,7 @@ const SUGGESTIONS = [
 
 export const CopilotPanel = () => {
   return (
-    <div className="bg-sidebar flex h-full flex-col">
-      <header className="border-border/60 flex h-11 shrink-0 items-center gap-2 border-b px-3.5">
-        <MessageSquareTextIcon className="text-muted-foreground size-4" />
-        <h2 className="text-foreground text-sm font-medium">Copilot</h2>
-      </header>
-
+    <div className="flex h-full flex-col">
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3.5 py-4">
         <span className="text-muted-foreground px-1 text-xs font-medium">
           Suggested

@@ -5,7 +5,6 @@ import {
   ChevronRight,
   ChevronsUpIcon,
   FilePlusCornerIcon,
-  FileStackIcon,
   FolderPlusIcon,
 } from "lucide-react"
 import { useState } from "react"
@@ -54,18 +53,71 @@ const PanelAction = ({
   )
 }
 
-export const FileExplorer = ({ projectId }: { projectId: Id<"projects"> }) => {
+export const ExplorerActions = ({
+  onNewFile,
+  onNewFolder,
+  onCollapse,
+}: {
+  onNewFile: () => void
+  onNewFolder: () => void
+  onCollapse: () => void
+}) => {
+  return (
+    <>
+      <PanelAction
+        label="New file"
+        onClick={(e) => {
+          e.stopPropagation()
+          onNewFile()
+        }}
+      >
+        <FilePlusCornerIcon className="size-3.5" />
+      </PanelAction>
+
+      <PanelAction
+        label="New folder"
+        onClick={(e) => {
+          e.stopPropagation()
+          onNewFolder()
+        }}
+      >
+        <FolderPlusIcon className="size-3.5" />
+      </PanelAction>
+
+      <PanelAction
+        label="Collapse all"
+        onClick={(e) => {
+          e.stopPropagation()
+          onCollapse()
+        }}
+      >
+        <ChevronsUpIcon className="size-3.5" />
+      </PanelAction>
+    </>
+  )
+}
+
+export const FileExplorer = ({
+  projectId,
+  creating,
+  onCreating,
+  collapseKey,
+}: {
+  projectId: Id<"projects">
+  creating: "file" | "folder" | null
+  onCreating: (type: "file" | "folder" | null) => void
+  collapseKey: number
+}) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [collapseKey, setCollapseKey] = useState(0)
-  const [creating, setCreating] = useState<"file" | "folder" | null>(null)
+  const rootOpen = isOpen || creating !== null
 
   const project = useProject(projectId)
-  const rootFiles = useFolderContents({ projectId, enabled: isOpen })
+  const rootFiles = useFolderContents({ projectId, enabled: rootOpen })
 
   const createFile = useCreateFile()
   const createFolder = useCreateFolder()
   const handleCreateFile = (name: string) => {
-    setCreating(null)
+    onCreating(null)
 
     if (creating == "file") {
       createFile({
@@ -83,52 +135,8 @@ export const FileExplorer = ({ projectId }: { projectId: Id<"projects"> }) => {
     }
   }
 
-  const startCreating = (type: "file" | "folder") => {
-    setIsOpen(true)
-    setCreating(type)
-  }
-
   return (
-    <div className="bg-sidebar group/panel flex h-full flex-col">
-      <div className="border-border/60 flex h-9 shrink-0 items-center gap-1.5 border-b px-2">
-        <FileStackIcon className="text-muted-foreground size-4" />
-        <span className="text-muted-foreground text-xs font-medium">
-          Explorer
-        </span>
-
-        <div className="ml-auto flex items-center gap-0.5 opacity-0 transition-opacity group-hover/panel:opacity-100">
-          <PanelAction
-            label="New file"
-            onClick={(e) => {
-              e.stopPropagation()
-              startCreating("file")
-            }}
-          >
-            <FilePlusCornerIcon className="size-3.5" />
-          </PanelAction>
-
-          <PanelAction
-            label="New folder"
-            onClick={(e) => {
-              e.stopPropagation()
-              startCreating("folder")
-            }}
-          >
-            <FolderPlusIcon className="size-3.5" />
-          </PanelAction>
-
-          <PanelAction
-            label="Collapse all"
-            onClick={(e) => {
-              e.stopPropagation()
-              setCollapseKey((prev) => prev + 1)
-            }}
-          >
-            <ChevronsUpIcon className="size-3.5" />
-          </PanelAction>
-        </div>
-      </div>
-
+    <div className="flex h-full flex-col">
       <ScrollArea className="min-h-0 flex-1">
         <button
           onClick={() => setIsOpen((value) => !value)}
@@ -138,7 +146,7 @@ export const FileExplorer = ({ projectId }: { projectId: Id<"projects"> }) => {
           <ChevronRight
             className={cn(
               "text-muted-foreground size-4 shrink-0",
-              isOpen && "rotate-90"
+              rootOpen && "rotate-90"
             )}
           />
           <FolderIcon
@@ -150,7 +158,7 @@ export const FileExplorer = ({ projectId }: { projectId: Id<"projects"> }) => {
           </span>
         </button>
 
-        {isOpen && (
+        {rootOpen && (
           <>
             {rootFiles === undefined && <LoadingRow level={0} />}
             {creating && (
@@ -158,7 +166,7 @@ export const FileExplorer = ({ projectId }: { projectId: Id<"projects"> }) => {
                 type={creating}
                 level={0}
                 onSubmit={handleCreateFile}
-                onCancel={() => setCreating(null)}
+                onCancel={() => onCreating(null)}
               />
             )}
             {rootFiles?.map((item) => (
