@@ -16,6 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
+import { Allotment } from "allotment"
 import { Id } from "../../../../convex/_generated/dataModel"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -49,6 +50,7 @@ export const Navbar = ({ projectId }: { projectId: Id<"projects"> }) => {
     setIsRenaming(true)
   }
 
+  //#region Handle Submit
   const handleSubmit = () => {
     if (!project) return
 
@@ -62,6 +64,7 @@ export const Navbar = ({ projectId }: { projectId: Id<"projects"> }) => {
 
     renameProject({ id: projectId, name: trimmedName })
   }
+  //#endregion
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
