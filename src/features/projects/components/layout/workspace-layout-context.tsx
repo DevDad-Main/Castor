@@ -61,6 +61,8 @@ interface WorkspaceLayoutContextValue {
   movePanel: (id: PanelId, to: DockSide) => void
   togglePanel: (id: PanelId) => void
   setSplit: (value: boolean) => void
+  setDockSizes: (sizes: WorkspaceLayout["dockSizes"]) => void
+  setSplitSizes: (sizes: WorkspaceLayout["splitSizes"]) => void
   reset: () => void
   draggingId: PanelId | null
   setDraggingId: (id: PanelId | null) => void
@@ -114,9 +116,9 @@ export const WorkspaceLayoutProvider = ({
       updateLayout(projectId, (prev) => {
         const remove = (arr: PanelId[]) => arr.filter((p) => p !== id)
         const next = {
+          ...prev,
           left: remove(prev.left),
           right: remove(prev.right),
-          split: prev.split,
         }
         next[to] = [...next[to], id]
         return next
@@ -133,9 +135,9 @@ export const WorkspaceLayoutProvider = ({
           return { ...prev, right: [...prev.right, id] }
         }
         return {
+          ...prev,
           left: prev.left.filter((p) => p !== id),
           right: prev.right.filter((p) => p !== id),
-          split: prev.split,
         }
       })
     },
@@ -145,6 +147,30 @@ export const WorkspaceLayoutProvider = ({
   const setSplit = useCallback(
     (value: boolean) => {
       updateLayout(projectId, (prev) => ({ ...prev, split: value }))
+    },
+    [projectId]
+  )
+
+  const setDockSizes = useCallback(
+    (sizes: WorkspaceLayout["dockSizes"]) => {
+      updateLayout(projectId, (prev) => ({
+        ...prev,
+        dockSizes: {
+          left: sizes.left,
+          main: sizes.main,
+          right: sizes.right,
+        },
+      }))
+    },
+    [projectId]
+  )
+
+  const setSplitSizes = useCallback(
+    (sizes: WorkspaceLayout["splitSizes"]) => {
+      updateLayout(projectId, (prev) => ({
+        ...prev,
+        splitSizes: sizes,
+      }))
     },
     [projectId]
   )
@@ -161,11 +187,24 @@ export const WorkspaceLayoutProvider = ({
       movePanel,
       togglePanel,
       setSplit,
+      setDockSizes,
+      setSplitSizes,
       reset,
       draggingId,
       setDraggingId,
     }),
-    [layout, has, sideOf, movePanel, togglePanel, setSplit, reset, draggingId]
+    [
+      layout,
+      has,
+      sideOf,
+      movePanel,
+      togglePanel,
+      setSplit,
+      setDockSizes,
+      setSplitSizes,
+      reset,
+      draggingId,
+    ]
   )
 
   return (

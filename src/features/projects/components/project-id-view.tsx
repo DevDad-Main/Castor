@@ -28,9 +28,6 @@ import {
 import { ALL_PANELS, PANEL_META, type PanelId } from "./layout/config"
 import { useWorkspaceLayout } from "./layout/workspace-layout-context"
 
-const DEFAULT_MAIN_SIZE = 1000
-const DEFAULT_PREVIEW_SIZE = 460
-
 const Tab = ({
   icon,
   label,
@@ -46,12 +43,17 @@ const Tab = ({
     <button
       onClick={onClick}
       className={cn(
-        "text-muted-foreground hover:text-foreground hover:bg-accent/40 border-border/60 relative flex h-full cursor-pointer items-center gap-2 border-r px-3.5 text-sm transition-colors",
-        isActive && "bg-background text-foreground"
+        "relative flex h-full cursor-pointer items-center gap-2 px-3.5 text-sm transition-colors",
+        isActive
+          ? "text-zinc-100"
+          : "text-zinc-500 hover:text-zinc-300"
       )}
     >
       {icon}
       {label}
+      {isActive && (
+        <span className="bg-twin absolute inset-x-3 bottom-0 h-0.5 rounded-full" />
+      )}
     </button>
   )
 }
@@ -62,7 +64,7 @@ const LayoutMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="text-muted-foreground hover:bg-accent/50 hover:text-foreground flex h-7 cursor-pointer items-center gap-1.5 rounded-md px-2.5 text-sm transition-colors">
+        <button className="text-zinc-400 hover:bg-landing-card/60 hover:text-zinc-100 flex h-7 cursor-pointer items-center gap-1.5 rounded-md px-2.5 text-sm transition-colors">
           <LayoutPanelLeftIcon className="size-3.5" />
           Layout
           <ChevronDownIcon className="size-3.5" />
@@ -101,23 +103,40 @@ const LayoutMenu = () => {
 
 const BlankEditor = () => {
   return (
-    <div className="bg-background flex h-full w-full flex-col">
-      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 text-center">
-        <FileTextIcon className="text-muted-foreground/40 size-9" />
-        <div className="flex flex-col gap-0.5">
-          <span className="text-foreground text-sm font-medium">
+    <div className="flex h-full w-full flex-col">
+      <div className="relative bg-[linear-gradient(180deg,oklch(0.17_0.014_264),oklch(0.145_0.012_264))] flex min-h-0 flex-1 flex-col items-center justify-center gap-3 overflow-hidden text-center">
+        <div
+          aria-hidden
+          className="animate-aurora pointer-events-none absolute -top-24 -left-32 size-[480px] rounded-full bg-[radial-gradient(circle,oklch(0.55_0.16_262/0.09),transparent_65%)] blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(oklch(0.7 0.14 262 / 0.04) 1px, transparent 1px)",
+            backgroundSize: "44px 44px",
+            maskImage:
+              "radial-gradient(60% 60% at 50% 50%, black, transparent 80%)",
+            WebkitMaskImage:
+              "radial-gradient(60% 60% at 50% 50%, black, transparent 80%)",
+          }}
+        />
+        <FileTextIcon className="text-zinc-600 size-10" />
+        <div className="flex flex-col gap-1">
+          <span className="text-zinc-200 text-sm font-medium">
             No file open
           </span>
-          <span className="text-muted-foreground text-xs">
+          <span className="text-zinc-500 text-xs">
             Select a file from the explorer to start editing
           </span>
         </div>
-        <span className="text-muted-foreground/70 mt-2 text-xs">
-          <kbd className="bg-muted text-muted-foreground border-border rounded-sm border px-1.5 py-0.5 text-[11px]">
+        <span className="font-mono text-[11px] text-zinc-600">
+          <kbd className="bg-landing-card border-landing-line text-zinc-400 rounded border px-1.5 py-0.5">
             ⌘
           </kbd>
           {" + "}
-          <kbd className="bg-muted text-muted-foreground border-border rounded-sm border px-1.5 py-0.5 text-[11px]">
+          <kbd className="bg-landing-card border-landing-line text-zinc-400 rounded border px-1.5 py-0.5">
             O
           </kbd>
           {"  "}to open a file
@@ -130,19 +149,28 @@ const BlankEditor = () => {
 const BlankPreview = () => {
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="border-border/60 bg-sidebar flex h-9 shrink-0 items-center gap-2 border-b px-3">
-        <div className="text-muted-foreground border-border bg-background flex w-full max-w-md items-center gap-2 rounded-md border px-2.5 py-1 text-xs">
-          <span>castor.app/workspace</span>
+      <div className="bg-landing-card/50 border-landing-line/60 flex h-9 shrink-0 items-center gap-2 border-b px-3">
+        <div className="border-landing-line bg-landing/80 flex w-full max-w-md items-center gap-2 rounded-md border px-2.5 py-1 text-xs">
+          <span className="font-mono text-[11px] text-zinc-400">
+            castor.app/workspace
+          </span>
+          <span className="ml-auto flex items-center gap-1.5">
+            <span className="relative flex size-1.5">
+              <span className="bg-emerald-400 absolute inline-flex size-full animate-ping rounded-full opacity-60" />
+              <span className="bg-emerald-400 relative inline-flex size-1.5 rounded-full" />
+            </span>
+            <span className="font-mono text-[10px] text-zinc-500">live</span>
+          </span>
         </div>
       </div>
 
-      <div className="bg-background flex min-h-0 flex-1 flex-col items-center justify-center gap-2 text-center">
-        <MonitorIcon className="text-muted-foreground/40 size-9" />
-        <div className="flex flex-col gap-0.5">
-          <span className="text-foreground text-sm font-medium">
+      <div className="bg-[radial-gradient(80%_90%_at_50%_0%,oklch(0.42_0.12_262/0.14),oklch(0.15_0.012_264)_60%)] flex min-h-0 flex-1 flex-col items-center justify-center gap-3 text-center">
+        <MonitorIcon className="text-zinc-600 size-10" />
+        <div className="flex flex-col gap-1">
+          <span className="text-zinc-200 text-sm font-medium">
             Preview not shared
           </span>
-          <span className="text-muted-foreground text-xs">
+          <span className="text-zinc-500 text-xs">
             Open a file and switch to Preview to render your workspace.
           </span>
         </div>
@@ -152,14 +180,14 @@ const BlankPreview = () => {
 }
 
 const ProjectIdView = () => {
-  const { layout, setSplit } = useWorkspaceLayout()
+  const { layout, setSplit, setSplitSizes } = useWorkspaceLayout()
   const [activeView, setActiveView] = useState<"editor" | "preview">("editor")
 
   const isSplit = layout.split
 
   return (
     <div className="flex h-full flex-col">
-      <nav className="bg-sidebar border-border/60 flex h-9 shrink-0 items-stretch border-b">
+      <nav className="bg-landing/95 border-landing-line/60 flex h-9 shrink-0 items-stretch border-b px-1">
         <Tab
           icon={<Code2Icon className="size-4" />}
           label="Code"
@@ -185,8 +213,8 @@ const ProjectIdView = () => {
           }}
         />
 
-        <div className="ml-auto flex items-center gap-1 pr-2">
-          <button className="text-muted-foreground hover:bg-accent/50 hover:text-foreground flex h-7 cursor-pointer items-center gap-1.5 rounded-md px-2.5 text-sm transition-colors">
+        <div className="ml-auto flex items-center gap-1 pr-1">
+          <button className="text-zinc-400 hover:bg-landing-card/60 hover:text-zinc-100 flex h-7 cursor-pointer items-center gap-1.5 rounded-md px-2.5 text-sm transition-colors">
             <FaGithub className="size-3.5" />
             Export
           </button>
@@ -197,14 +225,20 @@ const ProjectIdView = () => {
       <div className="relative min-h-0 flex-1">
         {isSplit ? (
           <Allotment
-            defaultSizes={[DEFAULT_MAIN_SIZE, DEFAULT_PREVIEW_SIZE]}
+            defaultSizes={[
+              layout.splitSizes.main,
+              layout.splitSizes.preview,
+            ]}
+            onDragEnd={(sizes) =>
+              setSplitSizes({ main: sizes[0], preview: sizes[1] })
+            }
             className="h-full"
           >
             <Allotment.Pane className="min-w-0">
               <BlankEditor />
             </Allotment.Pane>
-            <Allotment.Pane minSize={240} preferredSize={DEFAULT_PREVIEW_SIZE}>
-              <div className="border-border/60 h-full border-l">
+            <Allotment.Pane minSize={240} preferredSize={layout.splitSizes.preview}>
+              <div className="h-full border-l border-landing-line/60">
                 <BlankPreview />
               </div>
             </Allotment.Pane>

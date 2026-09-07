@@ -28,14 +28,14 @@ export const RenameInput = ({
 
   return (
     <div
-      className="border-ring/40 bg-accent/60 flex h-7 w-full items-center gap-1 rounded border"
+      className="border-twin/30 bg-landing-card/60 flex h-7 w-full items-center gap-1 rounded border"
       style={{ paddingLeft: getItemPadding(level, type === "file") }}
     >
       <div className="flex items-center gap-1.5">
         {type === "folder" && (
           <ChevronRightIcon
             className={cn(
-              "text-muted-foreground size-4 shrink-0",
+              "text-zinc-500 size-4 shrink-0",
               isOpen && "rotate-90"
             )}
           />
@@ -45,7 +45,7 @@ export const RenameInput = ({
           <FileIcon
             fileName={value}
             autoAssign
-            className="text-muted-foreground size-4 shrink-0"
+            className="text-zinc-500 size-4 shrink-0"
           />
         )}
 
@@ -58,7 +58,7 @@ export const RenameInput = ({
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="text-foreground flex-1 bg-transparent text-sm outline-none"
+        className="text-zinc-200 flex-1 bg-transparent text-sm outline-none"
         onBlur={handleSubmit}
         onKeyDown={(e) => {
           if (e.key === "Enter") {

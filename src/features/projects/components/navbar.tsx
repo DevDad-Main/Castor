@@ -7,7 +7,6 @@ import { UserButton } from "@clerk/nextjs"
 import { formatDistanceToNow } from "date-fns"
 import { FaGithub } from "react-icons/fa"
 import {
-  CheckIcon,
   LoaderIcon,
   PencilIcon,
   SettingsIcon,
@@ -23,7 +22,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 
 import { Id } from "../../../../convex/_generated/dataModel"
 import { useProject, useRenameProject } from "./hooks/use-projects"
@@ -44,7 +42,7 @@ const NavbarIconButton = ({
         <button
           onClick={onClick}
           aria-label={label}
-          className="text-muted-foreground hover:bg-accent/60 hover:text-foreground grid size-8 cursor-pointer place-items-center rounded-md transition-colors"
+          className="text-zinc-400 hover:bg-landing-card/60 hover:text-zinc-100 grid size-8 cursor-pointer place-items-center rounded-md transition-colors"
         >
           {children}
         </button>
@@ -95,18 +93,18 @@ export const Navbar = ({ projectId }: { projectId: Id<"projects"> }) => {
   const isImporting = project?.importStatus === "importing"
 
   return (
-    <nav className="bg-sidebar border-border/60 flex h-11 shrink-0 items-center justify-between gap-2 border-b px-3">
-      <div className="flex min-w-0 items-center gap-2">
+    <nav className="bg-landing/90 border-landing-line/60 flex h-12 shrink-0 items-center justify-between gap-2 border-b px-4 backdrop-blur-sm">
+      <div className="flex min-w-0 items-center gap-3">
         <Button
           variant="ghost"
           asChild
           className="h-8 w-fit! shrink-0 p-1.5! hover:bg-transparent"
         >
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="Castor" width={18} height={18} />
+          <Link href="/" className="flex items-center gap-2.5">
+            <Image src="/logo.svg" alt="Castor" width={20} height={20} />
             <span
               className={cn(
-                "text-[15px] font-semibold tracking-tight",
+                "text-base font-semibold tracking-tight text-zinc-100",
                 display.className
               )}
             >
@@ -115,13 +113,9 @@ export const Navbar = ({ projectId }: { projectId: Id<"projects"> }) => {
           </Link>
         </Button>
 
-        <Separator
-          orientation="vertical"
-          className="bg-border/60 h-5 w-px"
-          decorative
-        />
+        <div className="bg-landing-line/40 h-5 w-px" />
 
-        <div className="flex min-w-0 items-center gap-1">
+        <div className="flex min-w-0 items-center gap-2">
           {isRenaming ? (
             <input
               autoFocus
@@ -132,7 +126,7 @@ export const Navbar = ({ projectId }: { projectId: Id<"projects"> }) => {
               onBlur={handleSubmit}
               onKeyDown={handleKeyDown}
               className={cn(
-                "bg-accent/60 text-foreground focus:ring-ring/50 h-7 max-w-48 rounded-md px-1.5 text-sm font-medium ring-1 outline-none ring-inset",
+                "bg-landing-card/60 text-foreground focus:ring-twin/30 h-7 max-w-48 rounded-md px-2 text-sm font-medium ring-1 outline-none ring-inset ring-landing-line",
                 display.className
               )}
             />
@@ -140,22 +134,30 @@ export const Navbar = ({ projectId }: { projectId: Id<"projects"> }) => {
             <button
               onClick={handleStartRename}
               className={cn(
-                "hover:bg-accent/60 group flex h-7 max-w-56 items-center gap-1.5 rounded-md px-1.5 text-sm font-medium transition-colors",
+                "hover:bg-landing-card/60 group flex h-7 max-w-56 items-center gap-1.5 rounded-md px-2 text-sm font-medium text-zinc-200 transition-colors",
                 display.className
               )}
               title="Rename project"
             >
               <span className="truncate">{project?.name ?? "Loading..."}</span>
-              <PencilIcon className="text-muted-foreground/60 size-3 opacity-0 transition-opacity group-hover:opacity-100" />
+              <PencilIcon className="text-zinc-500 size-3 opacity-0 transition-opacity group-hover:opacity-100" />
             </button>
           )}
 
           <div className="flex items-center gap-1.5 pl-1">
             {isImporting ? (
-              <LoaderIcon className="text-muted-foreground size-3.5 animate-spin" />
+              <LoaderIcon className="text-zinc-400 size-3.5 animate-spin" />
             ) : (
               project?.updatedAt && (
-                <CheckIcon className="size-3.5 text-emerald-500" />
+                <div className="flex items-center gap-1.5">
+                  <span className="relative flex size-1.5">
+                    <span className="bg-emerald-400 absolute inline-flex size-full animate-ping rounded-full opacity-40" />
+                    <span className="bg-emerald-400 relative inline-flex size-1.5 rounded-full" />
+                  </span>
+                  <span className="font-mono text-[10px] text-zinc-500">
+                    saved
+                  </span>
+                </div>
               )
             )}
           </div>
@@ -173,15 +175,17 @@ export const Navbar = ({ projectId }: { projectId: Id<"projects"> }) => {
           <SettingsIcon className="size-4" />
         </NavbarIconButton>
 
-        <div className="px-1">
+        <div className="px-2">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="text-muted-foreground line-clamp-1 text-xs">
+                <span className="font-mono text-[11px] text-zinc-500">
                   {isImporting
-                    ? "Importing files…"
+                    ? "importing…"
                     : project?.updatedAt
-                      ? `Saved ${formatDistanceToNow(project.updatedAt, { addSuffix: true })}`
+                      ? formatDistanceToNow(project.updatedAt, {
+                          addSuffix: true,
+                        })
                       : ""}
                 </span>
               </TooltipTrigger>
@@ -194,11 +198,7 @@ export const Navbar = ({ projectId }: { projectId: Id<"projects"> }) => {
           </TooltipProvider>
         </div>
 
-        <Separator
-          orientation="vertical"
-          className="bg-border/60 h-5 w-px"
-          decorative
-        />
+        <div className="bg-landing-line/40 h-5 w-px" />
 
         <div className="pl-1">
           <UserButton />

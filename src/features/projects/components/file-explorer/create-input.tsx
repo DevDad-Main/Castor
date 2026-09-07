@@ -27,19 +27,19 @@ export const CreateInput = ({
 
   return (
     <div
-      className="border-ring/40 bg-accent/60 flex h-7 w-full items-center gap-1 rounded border"
+      className="border-twin/30 bg-landing-card/60 flex h-7 w-full items-center gap-1 rounded border"
       style={{ paddingLeft: getItemPadding(level, type === "file") }}
     >
       <div className="flex items-center gap-1.5">
         {type === "folder" && (
-          <ChevronRightIcon className="text-muted-foreground size-4 shrink-0" />
+          <ChevronRightIcon className="text-zinc-500 size-4 shrink-0" />
         )}
 
         {type === "file" && (
           <FileIcon
             fileName={value}
             autoAssign
-            className="text-muted-foreground size-4 shrink-0"
+            className="text-zinc-500 size-4 shrink-0"
           />
         )}
 
@@ -53,7 +53,7 @@ export const CreateInput = ({
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={type === "file" ? "name.tsx" : "folder-name"}
-        className="placeholder:text-muted-foreground text-foreground flex-1 bg-transparent text-sm outline-none"
+        className="placeholder:text-zinc-600 text-zinc-200 flex-1 bg-transparent text-sm outline-none"
         onBlur={handleSubmit}
         onKeyDown={(e) => {
           if (e.key === "Enter") {

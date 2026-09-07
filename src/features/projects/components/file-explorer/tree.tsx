@@ -112,7 +112,7 @@ export const Tree = ({
         <div className="flex items-center gap-0.5">
           <ChevronRightIcon
             className={cn(
-              "text-muted-foreground size-4 shrink-0 transition-transform",
+              "text-zinc-500 size-4 shrink-0 transition-transform",
               isOpen && "rotate-90"
             )}
           />

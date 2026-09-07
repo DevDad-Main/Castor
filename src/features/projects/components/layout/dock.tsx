@@ -53,9 +53,9 @@ export const DragTarget = ({ side }: { side: DockSide }) => {
     >
       <div
         className={cn(
-          "border-border/50 text-muted-foreground/50 flex h-full w-full items-center justify-center rounded-lg border border-dashed text-xs transition-colors",
+          "border-landing-line/50 text-zinc-500/50 flex h-full w-full items-center justify-center rounded-lg border border-dashed font-mono text-[11px] transition-colors",
           isDragTarget &&
-            "bg-ring/5 border-ring/70 ring-ring/60 text-muted-foreground ring-1 ring-inset"
+            "bg-twin/5 border-twin/50 ring-twin/30 text-zinc-300 ring-1 ring-inset"
         )}
       >
         Dock {side}
@@ -92,18 +92,18 @@ export const DockPanel = ({
   return (
     <section
       data-panel={id}
-      className="bg-sidebar flex min-h-0 min-w-0 flex-1 flex-col"
+      className="bg-landing-card/70 flex min-h-0 min-w-0 flex-1 flex-col backdrop-blur-sm"
     >
       <header
         draggable
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
-        className="hover:bg-accent/30 border-border/60 flex h-9 shrink-0 cursor-grab items-center gap-1.5 border-b px-2 select-none active:cursor-grabbing"
+        className="hover:bg-landing-card/80 border-landing-line/60 flex h-9 shrink-0 cursor-grab items-center gap-1.5 border-b px-2 select-none active:cursor-grabbing"
         title={`Drag to move ${meta.label}. Right-click for options.`}
       >
-        <GripVertical className="text-muted-foreground/50 size-3.5 shrink-0" />
-        <Icon className="text-muted-foreground size-4 shrink-0" />
-        <span className="text-foreground truncate text-xs font-medium">
+        <GripVertical className="text-zinc-600 size-3.5 shrink-0" />
+        <Icon className="text-zinc-400 size-4 shrink-0" />
+        <span className="text-zinc-200 truncate text-xs font-medium">
           {meta.label}
         </span>
 
@@ -113,7 +113,7 @@ export const DockPanel = ({
             <DropdownMenuTrigger asChild>
               <button
                 aria-label={`${meta.label} panel options`}
-                className="text-muted-foreground hover:bg-accent/60 hover:text-foreground grid size-6 shrink-0 cursor-pointer place-items-center rounded"
+                className="text-zinc-500 hover:bg-landing-card hover:text-zinc-200 grid size-6 shrink-0 cursor-pointer place-items-center rounded"
               >
                 <MoreHorizontal className="size-3.5" />
               </button>
@@ -176,8 +176,8 @@ export const Dock = ({
   return (
     <div
       className={cn(
-        "flex h-full min-h-0 flex-col",
-        isDragTarget && "ring-ring/60 bg-ring/5 rounded-md ring-1 ring-inset",
+        "bg-landing-card/70 flex h-full min-h-0 flex-col",
+        isDragTarget && "bg-twin/5 ring-twin/30 rounded-md ring-1 ring-inset",
         className
       )}
       onDragOver={(e) => {

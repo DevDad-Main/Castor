@@ -42,7 +42,7 @@ const PanelAction = ({
           <button
             onClick={onClick}
             aria-label={label}
-            className="text-muted-foreground hover:bg-accent/60 hover:text-foreground grid size-6 cursor-pointer place-items-center rounded transition-colors"
+            className="text-zinc-500 hover:bg-landing-card hover:text-zinc-200 grid size-6 cursor-pointer place-items-center rounded transition-colors"
           >
             {children}
           </button>
@@ -140,20 +140,20 @@ export const FileExplorer = ({
       <ScrollArea className="min-h-0 flex-1">
         <button
           onClick={() => setIsOpen((value) => !value)}
-          className="hover:bg-accent/50 flex h-7 w-full cursor-pointer items-center gap-1.5 pr-2 text-left"
+          className="hover:bg-landing-card/60 flex h-8 w-full cursor-pointer items-center gap-1.5 pr-2 text-left"
           style={{ paddingLeft: getItemPadding(0, false) }}
         >
           <ChevronRight
             className={cn(
-              "text-muted-foreground size-4 shrink-0",
+              "text-zinc-500 size-4 shrink-0",
               rootOpen && "rotate-90"
             )}
           />
           <FolderIcon
             folderName={project?.name ?? "workspace"}
-            className="text-muted-foreground size-4 shrink-0"
+            className="text-zinc-400 size-4 shrink-0"
           />
-          <span className="text-foreground truncate text-sm font-medium">
+          <span className="text-zinc-100 truncate text-sm font-medium">
             {project?.name ?? "Loading..."}
           </span>
         </button>

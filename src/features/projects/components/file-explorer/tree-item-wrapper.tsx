@@ -18,7 +18,7 @@ import { Doc } from "../../../../../convex/_generated/dataModel"
 
 export const baseRowClass = cn(
   "flex h-6 w-full items-center gap-1 rounded outline-none",
-  "text-muted-foreground hover:bg-accent/40 hover:text-foreground",
+  "text-zinc-400 hover:bg-landing-card/70 hover:text-zinc-200",
   "focus-visible:ring-1 focus-visible:ring-ring/40 focus-visible:ring-inset"
 )
 
@@ -53,7 +53,7 @@ export const TreeItemWrapper = ({
           onDoubleClick={onDoubleClick}
           className={cn(
             baseRowClass,
-            isActive && "bg-accent/40 text-foreground"
+            isActive && "bg-landing-card/80 text-zinc-100"
           )}
           style={{ paddingLeft: getItemPadding(level, item.type === "file") }}
           onKeyDown={(e) => {

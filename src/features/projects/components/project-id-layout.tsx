@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Allotment } from "allotment"
 import "allotment/dist/style.css"
 
-import { GitBranchIcon } from "lucide-react"
+import { GitBranchIcon, CheckCircle2Icon } from "lucide-react"
 
 import { Id } from "../../../../convex/_generated/dataModel"
 import { Navbar } from "./navbar"
@@ -18,29 +18,26 @@ import {
 import { type PanelId } from "./layout/config"
 
 const MIN_SIDEBAR_WIDTH = 200
-const SIDEBAR_HEIGHT_SIZES = [300, 900, 360]
 
 const StatusBar = () => {
   return (
-    <footer className="bg-sidebar border-border/60 flex h-7 shrink-0 items-center justify-between border-t px-3">
+    <footer className="bg-landing/80 border-landing-line/60 flex h-7 shrink-0 items-center justify-between border-t px-3">
       <div className="flex items-center gap-3">
         <span className="flex items-center gap-1.5">
-          <GitBranchIcon className="text-muted-foreground size-3.5" />
-          <span className="text-muted-foreground text-xs">main</span>
+          <GitBranchIcon className="text-zinc-500 size-3.5" />
+          <span className="font-mono text-[11px] text-zinc-400">main</span>
         </span>
-        <span className="text-muted-foreground hidden text-xs sm:block">
-          0 problems
+        <span className="flex items-center gap-1.5">
+          <CheckCircle2Icon className="size-3 text-emerald-500/80" />
+          <span className="font-mono text-[11px] text-zinc-500">synced</span>
         </span>
       </div>
 
-      <div className="flex items-center gap-3">
-        <span className="text-muted-foreground hidden text-xs md:block">
+      <div className="flex items-center gap-4">
+        <span className="hidden font-mono text-[11px] text-zinc-500 sm:block">
           TypeScript
         </span>
-        <span className="text-muted-foreground hidden text-xs lg:block">
-          UTF-8
-        </span>
-        <span className="text-muted-foreground text-xs">Ln 1, Col 1</span>
+        <span className="font-mono text-[11px] text-zinc-500">UTF-8</span>
       </div>
     </footer>
   )
@@ -53,17 +50,25 @@ const WorkspaceDocks = ({
   children: React.ReactNode
   projectId: Id<"projects">
 }) => {
-  const { layout, draggingId } = useWorkspaceLayout()
-  const [leftSize, rightSize] = SIDEBAR_HEIGHT_SIZES
-
+  const { layout, draggingId, setDockSizes } = useWorkspaceLayout()
   const hasLeft = layout.left.length > 0
   const hasRight = layout.right.length > 0
 
+  const dockSizes = layout.dockSizes
   const sizes = [
-    ...(hasLeft ? [leftSize] : []),
-    900,
-    ...(hasRight ? [rightSize] : []),
+    ...(hasLeft ? [dockSizes.left] : []),
+    dockSizes.main,
+    ...(hasRight ? [dockSizes.right] : []),
   ]
+
+  const handleDockResize = (next: number[]) => {
+    let i = 0
+    const nextSizes = { ...dockSizes }
+    if (hasLeft) nextSizes.left = next[i++]
+    nextSizes.main = next[i++]
+    if (hasRight) nextSizes.right = next[i]
+    setDockSizes(nextSizes)
+  }
 
   const [creating, setCreating] = useState<"file" | "folder" | null>(null)
   const [collapseKey, setCollapseKey] = useState(0)
@@ -99,12 +104,13 @@ const WorkspaceDocks = ({
         key={`${layout.left.join(",")}|${layout.right.join(",")}`}
         className="flex-1"
         defaultSizes={sizes}
+        onDragEnd={handleDockResize}
       >
         {hasLeft && (
           <Allotment.Pane
             snap
             minSize={MIN_SIDEBAR_WIDTH}
-            preferredSize={leftSize}
+            preferredSize={dockSizes.left}
           >
             <Dock side="left" renderPanel={renderPanel} />
           </Allotment.Pane>
@@ -113,7 +119,7 @@ const WorkspaceDocks = ({
         <Allotment.Pane className="min-h-0">{children}</Allotment.Pane>
 
         {hasRight && (
-          <Allotment.Pane snap minSize={280} preferredSize={rightSize}>
+          <Allotment.Pane snap minSize={140} preferredSize={dockSizes.right}>
             <Dock side="right" renderPanel={renderPanel} />
           </Allotment.Pane>
         )}
@@ -134,12 +140,27 @@ export const ProjectIdLayout = ({
 }) => {
   return (
     <WorkspaceLayoutProvider projectId={projectId}>
-      <div className="bg-background flex h-screen w-full flex-col">
-        <Navbar projectId={projectId} />
-        <div className="flex min-h-0 flex-1 overflow-hidden">
-          <WorkspaceDocks projectId={projectId}>{children}</WorkspaceDocks>
+      <div className="dark bg-landing text-foreground flex h-screen w-full flex-col antialiased">
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 z-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(oklch(0.7 0.14 262 / 0.04) 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+            maskImage:
+              "radial-gradient(80% 60% at 50% 0%, black, transparent 70%)",
+            WebkitMaskImage:
+              "radial-gradient(80% 60% at 50% 0%, black, transparent 70%)",
+          }}
+        />
+        <div className="relative z-10 flex h-screen w-full flex-col">
+          <Navbar projectId={projectId} />
+          <div className="flex min-h-0 flex-1 overflow-hidden">
+            <WorkspaceDocks projectId={projectId}>{children}</WorkspaceDocks>
+          </div>
+          <StatusBar />
         </div>
-        <StatusBar />
       </div>
     </WorkspaceLayoutProvider>
   )
